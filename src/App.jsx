@@ -33,7 +33,7 @@ function App() {
   }, [])
 
   return (
-    <Router>
+    <Router> 
       <Navbar categories={categories} />
       <Routes>
         {/* Add your other routes here */}

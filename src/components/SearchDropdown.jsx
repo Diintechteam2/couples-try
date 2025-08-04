@@ -242,7 +242,7 @@ export default function SearchDropdown({
             </Link>
           </div>
         )}
-      </div>
+      </div> 
     </div>
   )
 } 

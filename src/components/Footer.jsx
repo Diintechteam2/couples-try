@@ -115,7 +115,7 @@ export default function Footer({ categories = [] }) {
                 <input type="email" placeholder="E-mail" className="flex-1 border border-gray-700 rounded-l px-3 sm:px-4 md:px-6 py-2 sm:py-3 outline-none text-sm sm:text-base" />
                 <button type="submit" className="bg-[#F48FB1] hover:bg-[#e62e6b] text-white font-semibold px-4 sm:px-6 md:px-8 py-2 sm:py-3 rounded-r text-sm sm:text-base">JOIN</button>
               </form>
-            </div>
+            </div> 
             
             {/* Shop Links */}
             <div className="col-span-1">

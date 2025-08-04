@@ -249,7 +249,7 @@ export default function AllProductsPage() {
                   key={product._id} 
                   className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => navigate(`/product/${product._id}`)}
-                >
+                > 
                   <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg">
                     <img 
                       src={product.imageUrl} 

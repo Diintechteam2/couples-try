@@ -15,7 +15,7 @@ export default function ProductDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(false)
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchProduct = async () => {
       try {
         setLoading(true)

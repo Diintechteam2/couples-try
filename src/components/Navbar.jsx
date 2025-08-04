@@ -269,7 +269,7 @@ export default function Navbar({ categories = [] }) {
                     className="absolute left-1/2 -translate-x-1/2 top-full mt-2 bg-white shadow-lg rounded-lg z-50 border border-gray-100 min-w-[900px] px-8 py-6 flex gap-8"
                     onMouseEnter={handleDropdownMouseEnter}
                     onMouseLeave={handleDropdownMouseLeave}
-                  >
+                  > 
                     {cat.subcategories.map((sub) => (
                       <div key={sub.id} className="min-w-[180px]">
                         <div className="font-bold text-[#b1005a] mb-2">{sub.name}</div>

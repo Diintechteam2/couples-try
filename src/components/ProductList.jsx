@@ -384,7 +384,7 @@ function FiltersSection({
       </div>
 
       {/* Type Filter */}
-      {typeOptions.length > 0 && (
+      {typeOptions.length > 0 && ( 
         <div>
           <h3 className="font-semibold mb-3">Type</h3>
           <div className="space-y-2">

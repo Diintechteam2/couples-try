@@ -248,7 +248,7 @@ export default function CategoryPage() {
                         {discount}% OFF
                       </span>
                     )}
-                  </div>
+                  </div> 
                   <div className="p-4">
                     <div className="text-xs text-gray-500 mb-1 font-semibold">{product.brand}</div>
                     <div className="font-medium text-sm mb-2 line-clamp-2">{product.description}</div>

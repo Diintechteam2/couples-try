@@ -10,7 +10,7 @@ export default function Home({ categories = [] }) {
       <HeroSection/>
       <CategoryGrid categories={categories} />
       <ProductSection />
-      <BottomNav />
+      <BottomNav /> 
     </>
   )
 }

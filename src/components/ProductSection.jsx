@@ -19,7 +19,7 @@ export default function ProductSection() {
   }
   
   useEffect(()=>{
-    fetchDresses()
+    fetchDresses() 
   },[])
 
   // Filter products by category (Women or Men)

@@ -91,7 +91,7 @@ export default function CategoryGrid({ categories = [] }) {
               <img 
                 src={categoryImages[i] || "/catagoryimage-1.webp"} 
                 alt={cat.name} 
-                className="absolute inset-0 w-full h-full object-fill z-0" 
+                className="absolute inset-0 w-full h-full object-fill z-0"  
                 draggable="false" 
               />
               <div className="absolute bottom-0 left-0 right-0 z-20 bg-black bg-opacity-30 py-3">
