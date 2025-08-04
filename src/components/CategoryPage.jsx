@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
+import { Filter, X, ChevronDown, ChevronUp } from "lucide-react"
 import axios from "axios"
 import { API_BASE_URL } from "../config"
 
 export default function CategoryPage() {
   const { categoryName } = useParams()
+  const navigate = useNavigate()
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -14,6 +16,7 @@ export default function CategoryPage() {
   const [typeOptions, setTypeOptions] = useState([])
   const [discountOptions, setDiscountOptions] = useState([])
   const [priceOptions, setPriceOptions] = useState([])
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
   
   // Filter state
   const [selectedFilters, setSelectedFilters] = useState({
@@ -146,162 +149,257 @@ export default function CategoryPage() {
   if (!products.length) return <div className="p-8 text-center">No products found in this category.</div>
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 px-2 md:px-8 py-6">
-      {/* Sidebar Filters */}
-      <aside className="w-full md:w-64 bg-white rounded-lg shadow p-4 mb-4 md:mb-0">
-        <h3 className="font-bold text-lg mb-4">FILTERS</h3>
-        
-        {/* Subcategory Filter */}
-        {subcategoryOptions.length > 0 && (
-          <div className="mb-4">
-            <div className="font-semibold mb-2">Subcategory</div>
-            {subcategoryOptions.map(opt => (
-              <label key={opt.value} className="flex items-center mb-1">
-                <input 
-                  type="checkbox" 
-                  checked={selectedFilters.subcategory.includes(opt.value)} 
-                  onChange={() => handleFilterChange('subcategory', opt.value)} 
-                  className="mr-2" 
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        )}
-
-        {/* Type Filter */}
-        {typeOptions.length > 0 && (
-          <div className="mb-4">
-            <div className="font-semibold mb-2">Type</div>
-            {typeOptions.map(opt => (
-              <label key={opt.value} className="flex items-center mb-1">
-                <input 
-                  type="checkbox" 
-                  checked={selectedFilters.type.includes(opt.value)} 
-                  onChange={() => handleFilterChange('type', opt.value)} 
-                  className="mr-2" 
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        )}
-
-        {/* Price Filter */}
-        <div className="mb-4">
-          <div className="font-semibold mb-2">Price</div>
-          {priceOptions.map(opt => (
-            <label key={opt.value} className="flex items-center mb-1">
-              <input 
-                type="checkbox" 
-                checked={selectedFilters.price.includes(opt.value)} 
-                onChange={() => handleFilterChange('price', opt.value)} 
-                className="mr-2" 
-              />
-              {opt.label}
-            </label>
-          ))}
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Filter Toggle */}
+      <div className="md:hidden bg-white border-b border-gray-200 p-4">
+        <div className="flex items-center justify-end">
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="flex items-center gap-2 bg-pink-100 text-pink-700 px-4 py-2 rounded-lg"
+          >
+            <Filter size={16} />
+            Filters
+            {showMobileFilters ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
         </div>
+      </div>
 
-        {/* Brand Filter */}
-        {brandOptions.length > 0 && (
-          <div className="mb-4">
-            <div className="font-semibold mb-2">Brand</div>
-            {brandOptions.map(opt => (
-              <label key={opt.value} className="flex items-center mb-1">
-                <input 
-                  type="checkbox" 
-                  checked={selectedFilters.brand.includes(opt.value)} 
-                  onChange={() => handleFilterChange('brand', opt.value)} 
-                  className="mr-2" 
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        )}
-
-        {/* Discount Filter */}
-        <div className="mb-4">
-          <div className="font-semibold mb-2">Discount</div>
-          {discountOptions.map(opt => (
-            <label key={opt.value} className="flex items-center mb-1">
-              <input 
-                type="checkbox" 
-                checked={selectedFilters.discount.includes(opt.value)} 
-                onChange={() => handleFilterChange('discount', opt.value)} 
-                className="mr-2" 
-              />
-              {opt.label}
-            </label>
-          ))}
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1">
-        {/* Heading and Sort */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
-          <div>
-            <h1 className="text-sm text-gray-600">Home / {categoryName}</h1>
-            <h1 className="text-2xl font-bold mb-1">{pageTitle}</h1>
-            <div className="text-sm text-gray-600">Showing {filteredProducts.length} of {products.length} products</div>
-          </div>
-          <div>
-            <select value={sort} onChange={handleSortChange} className="border rounded px-3 py-2 text-sm">
-              <option value="relevance">Sort by : Relevance</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="discount">Discount</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {sortedProducts.map((product) => {
-            const discount = getDiscount(product.price, product.originalPrice);
-            return(
-              <div key={product._id} className="bg-white rounded-lg shadow p-2 flex flex-col">
-                <div className="relative w-full aspect-[3/4] mb-2 overflow-hidden rounded-lg">
-                  <img src={product.imageUrl} alt={product.description} className="w-full h-full object-contain" />
-                  {discount && (
-                    <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">
-                      {discount}% OFF
-                    </span>
-                  )}
-                </div>
-                <div className="flex-1 flex flex-col">
-                  <div className="text-xs text-gray-500 mb-1 font-semibold">{product.brand}</div>
-                  <div className="font-medium text-sm mb-1 line-clamp-2">{product.description}</div>
-                  {product.subcategory && (
-                    <div className="text-xs text-blue-600 mb-1">{product.subcategory}</div>
-                  )}
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-2xl text-pink-700">₹{product.price}</span>
-                    {product.originalPrice && (
-                      <span className="text-xl text-gray-400 line-through">₹{product.originalPrice}</span>
-                    )}
-                  </div>
-                  <div className="text-xs text-green-700 font-semibold mb-1">Free Delivery</div>
-                  <div className="flex items-center gap-1 text-xs mb-1">
-                    <span className="bg-green-500 text-white rounded px-1.5 py-0.5 font-bold">{product.rating || '3.9'}</span>
-                    <span className="text-gray-500">{product.reviews || '1000'} Reviews</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mb-1">
-                    {product.sizes && product.sizes.filter(s => s.selected).map(s => (
-                      <span key={s.size} className="border border-pink-300 rounded px-2 py-0.5 text-xs">{s.size}</span>
-                    ))}
-                  </div>
-                  {product.stockStatus && (
-                    <div className="text-xs text-orange-600 font-semibold">{product.stockStatus}</div>
-                  )}
+      <div className="flex flex-col md:flex-row">
+        {/* Mobile Filters Overlay */}
+        {showMobileFilters && (
+          <div className="md:hidden fixed inset-0 z-50 bg-black bg-opacity-50">
+            <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-xl">
+              <div className="p-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">Filters</h2>
+                  <button
+                    onClick={() => setShowMobileFilters(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
               </div>
-            )}
+              <div className="p-4 overflow-y-auto h-full">
+                <FiltersSection 
+                  subcategoryOptions={subcategoryOptions}
+                  typeOptions={typeOptions}
+                  priceOptions={priceOptions}
+                  brandOptions={brandOptions}
+                  discountOptions={discountOptions}
+                  selectedFilters={selectedFilters}
+                  handleFilterChange={handleFilterChange}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:block w-64 bg-white border-r border-gray-200 p-6">
+          <h2 className="text-lg font-semibold mb-6">Filters</h2>
+          <FiltersSection 
+            subcategoryOptions={subcategoryOptions}
+            typeOptions={typeOptions}
+            priceOptions={priceOptions}
+            brandOptions={brandOptions}
+            discountOptions={discountOptions}
+            selectedFilters={selectedFilters}
+            handleFilterChange={handleFilterChange}
+          />
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-4 md:p-8">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-sm text-gray-600">Home / {categoryName}</h1>
+            <h1 className="text-2xl font-bold mb-1">{pageTitle}</h1>
+            
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <p className="text-gray-600">Showing {filteredProducts.length} of {products.length} products</p>
+              <select 
+                value={sort} 
+                onChange={handleSortChange} 
+                className="border border-gray-300 rounded-lg px-4 py-2 text-sm"
+              >
+                <option value="relevance">Sort by: Relevance</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="discount">Discount</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            {sortedProducts.map((product) => {
+              const discount = getDiscount(product.price, product.originalPrice);
+              return (
+                <div key={product._id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
+                  <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.description} 
+                      className="w-full h-full object-fill" 
+                    />
+                    {discount && (
+                      <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        {discount}% OFF
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <div className="text-xs text-gray-500 mb-1 font-semibold">{product.brand}</div>
+                    <div className="font-medium text-sm mb-2 line-clamp-2">{product.description}</div>
+                    {product.subcategory && (
+                      <div className="text-xs text-blue-600 mb-2">{product.subcategory}</div>
+                    )}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-bold text-lg text-pink-700">₹{product.price}</span>
+                      {product.originalPrice && (
+                        <span className="text-sm text-gray-400 line-through">₹{product.originalPrice}</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-green-700 font-semibold">Free Delivery</div>
+                    <div className="flex items-center gap-1 text-xs mt-2">
+                      <span className="bg-green-500 text-white rounded px-1.5 py-0.5 font-bold">{product.rating || '3.9'}</span>
+                      <span className="text-gray-500">{product.reviews || '1000'} Reviews</span>
+                    </div>
+                    {product.sizes && product.sizes.filter(s => s.selected).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {product.sizes.filter(s => s.selected).map(s => (
+                          <span key={s.size} className="border border-pink-300 rounded px-2 py-0.5 text-xs">{s.size}</span>
+                        ))}
+                      </div>
+                    )}
+                    {product.stockStatus && (
+                      <div className="text-xs text-orange-600 font-semibold mt-2">{product.stockStatus}</div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No products found matching your filters.</p>
+            </div>
           )}
+        </main>
+      </div>
+    </div>
+  )
+}
+
+// Separate Filters Component
+function FiltersSection({ 
+  subcategoryOptions, 
+  typeOptions, 
+  priceOptions, 
+  brandOptions, 
+  discountOptions, 
+  selectedFilters, 
+  handleFilterChange 
+}) {
+  return (
+    <div className="space-y-6">
+      {/* Subcategory Filter */}
+      {subcategoryOptions.length > 0 && (
+        <div>
+          <h3 className="font-semibold mb-3">Subcategory</h3>
+          <div className="space-y-2">
+            {subcategoryOptions.map(opt => (
+              <label key={opt.value} className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={selectedFilters.subcategory.includes(opt.value)}
+                  onChange={() => handleFilterChange('subcategory', opt.value)}
+                  className="mr-2"
+                />
+                <span className="text-sm">{opt.label}</span>
+              </label>
+            ))}
+          </div>
         </div>
-      </main>
+      )}
+
+      {/* Type Filter */}
+      {typeOptions.length > 0 && (
+        <div>
+          <h3 className="font-semibold mb-3">Type</h3>
+          <div className="space-y-2">
+            {typeOptions.map(opt => (
+              <label key={opt.value} className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={selectedFilters.type.includes(opt.value)}
+                  onChange={() => handleFilterChange('type', opt.value)}
+                  className="mr-2"
+                />
+                <span className="text-sm">{opt.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Price Filter */}
+      <div>
+        <h3 className="font-semibold mb-3">Price</h3>
+        <div className="space-y-2">
+          {priceOptions.map(opt => (
+            <label key={opt.value} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={selectedFilters.price.includes(opt.value)}
+                onChange={() => handleFilterChange('price', opt.value)}
+                className="mr-2"
+              />
+              <span className="text-sm">{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Brand Filter */}
+      {brandOptions.length > 0 && (
+        <div>
+          <h3 className="font-semibold mb-3">Brand</h3>
+          <div className="space-y-2">
+            {brandOptions.map(opt => (
+              <label key={opt.value} className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={selectedFilters.brand.includes(opt.value)}
+                  onChange={() => handleFilterChange('brand', opt.value)}
+                  className="mr-2"
+                />
+                <span className="text-sm">{opt.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Discount Filter */}
+      <div>
+        <h3 className="font-semibold mb-3">Discount</h3>
+        <div className="space-y-2">
+          {discountOptions.map(opt => (
+            <label key={opt.value} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={selectedFilters.discount.includes(opt.value)}
+                onChange={() => handleFilterChange('discount', opt.value)}
+                className="mr-2"
+              />
+              <span className="text-sm">{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
     </div>
   )
 } 

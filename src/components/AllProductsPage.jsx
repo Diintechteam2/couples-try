@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Filter, X, ChevronDown, ChevronUp } from "lucide-react"
 import axios from "axios"
 import { API_BASE_URL } from "../config"
 
 export default function AllProductsPage() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
@@ -168,8 +169,8 @@ export default function AllProductsPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Filter Toggle */}
       <div className="md:hidden bg-white border-b border-gray-200 p-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">All Products</h1>
+        <div className="flex items-center justify-end">
+          {/* <h1 className="text-xl font-bold text-gray-900">All Products</h1> */}
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
             className="flex items-center gap-2 bg-pink-100 text-pink-700 px-4 py-2 rounded-lg"
@@ -223,6 +224,7 @@ export default function AllProductsPage() {
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">All Products</h1>
+            
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <p className="text-gray-600">Showing {filteredProducts.length} of {products.length} products</p>
               <select 
@@ -243,12 +245,16 @@ export default function AllProductsPage() {
             {sortedProducts.map((product) => {
               const discount = getDiscount(product.price, product.originalPrice);
               return (
-                <div key={product._id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <div 
+                  key={product._id} 
+                  className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/product/${product._id}`)}
+                >
                   <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg">
                     <img 
                       src={product.imageUrl} 
                       alt={product.type} 
-                      className="w-full h-full object-cover" 
+                      className="w-full h-full object-fill" 
                     />
                     {discount && (
                       <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">

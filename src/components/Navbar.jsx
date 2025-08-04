@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { User, Search, Heart, ShoppingBag, Package, Menu, X, ChevronRight } from "lucide-react"
-import { API_BASE_URL } from "../config"
-import axios from "axios"
+import SearchDropdown from "./SearchDropdown"
 
 const menuItems = [
   "BRA",
@@ -37,6 +36,9 @@ const categoryItems = [
 
 export default function Navbar({ categories = [] }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const navbarRef = useRef(null)
+  
   // New state for hover logic
   const [hoveredCategory, setHoveredCategory] = useState(null)
   const [hoveredSubcategory, setHoveredSubcategory] = useState(null)
@@ -108,6 +110,14 @@ export default function Navbar({ categories = [] }) {
     setHoveredCategory(null)
     // Navigate to category page with all products and filters
     window.location.href = `/category/${category.name}`
+  }
+
+  const openSearch = () => {
+    setSearchOpen(true)
+  }
+
+  const closeSearch = () => {
+    setSearchOpen(false)
   }
 
   return (
@@ -230,7 +240,7 @@ export default function Navbar({ categories = [] }) {
             {/* User icon: only md+ */}
             <span className="cursor-pointer hidden md:inline-flex"><User size={20} /></span>
             {/* Search icon: always */}
-            <span className="cursor-pointer"><Search size={20} /></span>
+            <span className="cursor-pointer" onClick={openSearch}><Search size={20} /></span>
             {/* Heart icon: always */}
             <span className="cursor-pointer"><Heart size={20} /></span>
             {/* Cart icon: only md+ */}
@@ -299,6 +309,14 @@ export default function Navbar({ categories = [] }) {
           </ul>
         </div>
       </nav>
+
+      {/* Search Dropdown Component */}
+      <SearchDropdown 
+        isOpen={searchOpen}
+        onClose={closeSearch}
+        position="top"
+        triggerRef={navbarRef}
+      />
 
       {/* Product Categories Section */}
       <div className="w-full bg-[#FFC1CC] px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-5 md:py-6 lg:py-8">

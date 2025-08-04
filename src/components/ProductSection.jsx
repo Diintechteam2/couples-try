@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react"
 import { Heart, Star, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { API_BASE_URL } from "../config"
 import axios from "axios"
 
 export default function ProductSection() {
-  const [activeTab, setActiveTab] = useState("hot-sellers")
+  const [activeTab, setActiveTab] = useState("women")
   const [dresses, setDresses] = useState([])
   const scrollContainerRef = useRef(null)
+  const navigate = useNavigate()
 
   const fetchDresses = async () => {
     const response = await axios.get(`${API_BASE_URL}/clients/CLI746136Q0EY/dress/get`)
@@ -21,7 +22,10 @@ export default function ProductSection() {
     fetchDresses()
   },[])
 
-  const filteredProducts = dresses.filter(product => product.category)
+  // Filter products by category (Women or Men)
+  const filteredProducts = dresses
+    .filter(product => product.category && product.category.toLowerCase() === activeTab)
+    .slice(0, 16) // Limit to 16 latest products for 2 rows
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -37,6 +41,10 @@ export default function ProductSection() {
     }
   }
 
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`)
+  }
+
   return (
     <section className="w-full bg-white py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12">
       <div className="max-w-6xl lg:max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
@@ -44,24 +52,24 @@ export default function ProductSection() {
         <div className="flex justify-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
           <div className="flex bg-gray-100 rounded-lg lg:rounded-xl p-1 md:p-2">
             <button
-              onClick={() => setActiveTab("hot-sellers")}
+              onClick={() => setActiveTab("women")}
               className={`px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-2 md:py-3 lg:py-4 rounded-md lg:rounded-lg text-xs sm:text-sm md:text-base lg:text-lg font-medium lg:font-semibold transition-all duration-200 ${
-                activeTab === "hot-sellers"
+                activeTab === "women"
                   ? "bg-[#d6668c] text-white shadow-md"
                   : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
               }`}
             >
-              Hot Sellers
+              Women
             </button>
             <button
-              onClick={() => setActiveTab("just-arrived")}
+              onClick={() => setActiveTab("men")}
               className={`px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-2 md:py-3 lg:py-4 rounded-md lg:rounded-lg text-xs sm:text-sm md:text-base lg:text-lg font-medium lg:font-semibold transition-all duration-200 ${
-                activeTab === "just-arrived"
+                activeTab === "men"
                   ? "bg-[#d6668c] text-white shadow-md"
                   : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
               }`}
             >
-              Just Arrived
+              Men
             </button>
           </div>
         </div>
@@ -71,8 +79,12 @@ export default function ProductSection() {
           {/* First Row */}
           <div className="mb-4">
             <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
-              {filteredProducts.slice(0, 4).map((product) => (
-                <div key={product._id} className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(50vw-20px)] md:w-[calc(25vw-25px)] bg-white rounded-xl shadow p-2 flex flex-col items-start">
+              {filteredProducts.slice(0, 8).map((product) => (
+                <div 
+                  key={product._id} 
+                  className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(25vw-18px)] md:w-[calc(25vw-20px)] bg-white rounded-xl shadow p-2 flex flex-col items-start cursor-pointer hover:shadow-lg transition-shadow"
+                  onClick={() => handleProductClick(product._id)}
+                >
                   <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
                     <img
                       src={product.imageUrl}
@@ -94,23 +106,53 @@ export default function ProductSection() {
           {/* Second Row */}
           <div>
             <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
-              {filteredProducts.slice(4, 8).map((product) => (
-                <div key={product._id} className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(50vw-20px)] md:w-[calc(25vw-25px)] bg-white rounded-xl shadow p-2 flex flex-col items-start">
-                  <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.type}
-                      className="w-full h-full object-fill"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
-                    <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
-                      ₹{product.price}
+              {filteredProducts.length > 8 ? 
+                // If we have more than 8 products, show the next 8
+                filteredProducts.slice(8, 16).map((product) => (
+                  <div 
+                    key={product._id} 
+                    className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(25vw-18px)] md:w-[calc(25vw-20px)] bg-white rounded-xl shadow p-2 flex flex-col items-start cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => handleProductClick(product._id)}
+                  >
+                    <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                      <img
+                        src={product.imageUrl}
+                        alt={product.type}
+                        className="w-full h-full object-fill"
+                      />
+                    </div>
+                    <div className="w-full">
+                      <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
+                      <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
+                        ₹{product.price}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+                :
+                // If we have 8 or fewer products, show the same products again
+                filteredProducts.map((product) => (
+                  <div 
+                    key={`${product._id}-row2`} 
+                    className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(25vw-18px)] md:w-[calc(25vw-20px)] bg-white rounded-xl shadow p-2 flex flex-col items-start cursor-pointer hover:shadow-lg transition-shadow"
+                    onClick={() => handleProductClick(product._id)}
+                  >
+                    <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                      <img
+                        src={product.imageUrl}
+                        alt={product.type}
+                        className="w-full h-full object-fill"
+                      />
+                    </div>
+                    <div className="w-full">
+                      <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
+                      <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
+                        ₹{product.price}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
             </div>
           </div>
         </div>
@@ -141,7 +183,12 @@ export default function ProductSection() {
               style={{ scrollSnapType: 'x mandatory' }}
             >
               {filteredProducts.map((product) => (
-                <div key={product._id} className="flex-shrink-0 w-72 lg:w-80 xl:w-96 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group/card" style={{ scrollSnapAlign: 'start' }}>
+                <div 
+                  key={product._id} 
+                  className="flex-shrink-0 w-72 lg:w-80 xl:w-96 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group/card cursor-pointer" 
+                  style={{ scrollSnapAlign: 'start' }}
+                  onClick={() => handleProductClick(product._id)}
+                >
                   {/* Product Image Container */}
                   <div className="relative group/image">
                     <img
@@ -190,7 +237,7 @@ export default function ProductSection() {
             VIEW ALL
           </Link>
         </div>
-      </div>
+      </div> 
 
       <style>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }

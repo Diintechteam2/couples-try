@@ -9,6 +9,7 @@ import Footer from './components/Footer'
 import ProductList from './components/ProductList'
 import CategoryPage from './components/CategoryPage'
 import AllProductsPage from './components/AllProductsPage'
+import ProductDetail from './components/ProductDetail'
 import Home from './components/Home'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
@@ -39,6 +40,7 @@ function App() {
         <Route path="/" index="/" element={<Home categories={categories} />} />
         <Route path="/category/:categoryName" element={<CategoryPage />} />
         <Route path="/all-products" element={<AllProductsPage />} />
+        <Route path="/product/:productId" element={<ProductDetail />} />
         {/* <Route path="/category/:categoryName/subcategory/:subcategoryName" element={<ProductList type="subcategory" />} /> */}
         <Route path="/category/:categoryName/subcategory/:subcategoryName/type/:typeName" element={<ProductList type="type" />} />
         <Route path="/category/:categoryName/type/:typeName" element={<ProductList type="type" />} />
