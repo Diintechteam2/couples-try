@@ -4,123 +4,6 @@ import { Link } from "react-router-dom"
 import { API_BASE_URL } from "../config"
 import axios from "axios"
 
-
-
-const products = [
-  {
-    id: 1,
-    name: "X-Frame Cotton Comfort Seamless Bra",
-    price: 699,
-    rating: 4.0,
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 2,
-    name: "Lace Section Cups Comfort Bra",
-    price: 449,
-    rating: 0.0,
-    image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 3,
-    name: "Perfect fit comfort non padded bra",
-    price: 799,
-    rating: 3.5,
-    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 4,
-    name: "Perfect fit comfort non padded bra",
-    price: 799,
-    rating: 3.5,
-    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 5,
-    name: "Perfect fit comfort non padded bra",
-    price: 799,
-    rating: 3.5,
-    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 6,
-    name: "Perfect fit comfort non padded bra",
-    price: 799,
-    rating: 3.5,
-    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 7,
-    name: "Perfect fit comfort non padded bra",
-    price: 799,
-    rating: 3.5,
-    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 8,
-    name: "Perfect fit comfort non padded bra",
-    price: 799,
-    rating: 3.5,
-    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 9,
-    name: "Perfect fit comfort non padded bra",
-    price: 799,
-    rating: 3.5,
-    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=facearea&w=256&q=80",
-    category: "hot-sellers"
-  },
-  {
-    id: 10,
-    name: "Silky Comfort Lounge Bra",
-    price: 599,
-    rating: 4.2,
-    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=facearea&w=256&q=80",
-    category: "just-arrived"
-  },
-  {
-    id: 11,
-    name: "Co-ord Comfort Set",
-    price: 899,
-    rating: 4.5,
-    image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=facearea&w=256&q=80",
-    category: "just-arrived"
-  },
-  {
-    id: 12,
-    name: "Winter Comfort Bra",
-    price: 649,
-    rating: 3.8,
-    image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=256&q=80",
-    category: "just-arrived"
-  },
-  {
-    id: 13,
-    name: "Winter Comfort Bra",
-    price: 649,
-    rating: 3.8,
-    image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=256&q=80",
-    category: "just-arrived"
-  },
-  {
-    id: 14,
-    name: "Winter Comfort Bra",
-    price: 649,
-    rating: 3.8,
-    image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=facearea&w=256&q=80",
-    category: "just-arrived"
-  }
-]
-
 export default function ProductSection() {
   const [activeTab, setActiveTab] = useState("hot-sellers")
   const [dresses, setDresses] = useState([])
@@ -155,14 +38,14 @@ export default function ProductSection() {
   }
 
   return (
-    <section className="w-full bg-white md:bg-white py-8 md:py-12 px-2 md:px-4">
-      <div className="max-w-6xl md:max-w-[1400px] mx-auto">
+    <section className="w-full bg-white py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12">
+      <div className="max-w-6xl lg:max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
         {/* Tabs */}
-        <div className="flex justify-center mb-6 md:mb-8">
-          <div className="flex bg-gray-100 rounded-lg md:rounded-xl p-1 md:p-2">
+        <div className="flex justify-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+          <div className="flex bg-gray-100 rounded-lg lg:rounded-xl p-1 md:p-2">
             <button
               onClick={() => setActiveTab("hot-sellers")}
-              className={`px-4 md:px-8 py-2 md:py-3 rounded-md md:rounded-lg text-sm md:text-base font-medium md:font-semibold transition-all duration-200 ${
+              className={`px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-2 md:py-3 lg:py-4 rounded-md lg:rounded-lg text-xs sm:text-sm md:text-base lg:text-lg font-medium lg:font-semibold transition-all duration-200 ${
                 activeTab === "hot-sellers"
                   ? "bg-[#d6668c] text-white shadow-md"
                   : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
@@ -172,7 +55,7 @@ export default function ProductSection() {
             </button>
             <button
               onClick={() => setActiveTab("just-arrived")}
-              className={`px-4 md:px-8 py-2 md:py-3 rounded-md md:rounded-lg text-sm md:text-base font-medium md:font-semibold transition-all duration-200 ${
+              className={`px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 py-2 md:py-3 lg:py-4 rounded-md lg:rounded-lg text-xs sm:text-sm md:text-base lg:text-lg font-medium lg:font-semibold transition-all duration-200 ${
                 activeTab === "just-arrived"
                   ? "bg-[#d6668c] text-white shadow-md"
                   : "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
@@ -183,14 +66,14 @@ export default function ProductSection() {
           </div>
         </div>
 
-        {/* Product Cards - Mobile Grid */}
-        <div className="block md:hidden bg-[#e6f7f3] rounded-2xl p-2 pt-4">
+        {/* Product Cards - Mobile & Tablet Grid */}
+        <div className="block lg:hidden bg-[#e6f7f3] rounded-2xl p-2 pt-4">
           {/* First Row */}
           <div className="mb-4">
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+            <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
               {filteredProducts.slice(0, 4).map((product) => (
-                <div key={product._id} className="flex-shrink-0 w-[calc(50vw-24px)] bg-white rounded-xl shadow p-2 flex flex-col items-start">
-                  <div className="w-full h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                <div key={product._id} className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(50vw-20px)] md:w-[calc(25vw-25px)] bg-white rounded-xl shadow p-2 flex flex-col items-start">
+                  <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
                     <img
                       src={product.imageUrl}
                       alt={product.type}
@@ -198,8 +81,8 @@ export default function ProductSection() {
                     />
                   </div>
                   <div className="w-full">
-                    <div className="text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
-                    <div className="text-[13px] font-bold text-black mt-1">
+                    <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
+                    <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
                       ₹{product.price}
                     </div>
                   </div>
@@ -210,10 +93,10 @@ export default function ProductSection() {
 
           {/* Second Row */}
           <div>
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+            <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
               {filteredProducts.slice(4, 8).map((product) => (
-                <div key={product._id} className="flex-shrink-0 w-[calc(50vw-24px)] bg-white rounded-xl shadow p-2 flex flex-col items-start">
-                  <div className="w-full h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                <div key={product._id} className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(50vw-20px)] md:w-[calc(25vw-25px)] bg-white rounded-xl shadow p-2 flex flex-col items-start">
+                  <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
                     <img
                       src={product.imageUrl}
                       alt={product.type}
@@ -221,8 +104,8 @@ export default function ProductSection() {
                     />
                   </div>
                   <div className="w-full">
-                    <div className="text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
-                    <div className="text-[13px] font-bold text-black mt-1">
+                    <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
+                    <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
                       ₹{product.price}
                     </div>
                   </div>
@@ -232,66 +115,66 @@ export default function ProductSection() {
           </div>
         </div>
 
-        {/* Product Grid with Scroll Buttons - Desktop/Tablet Only */}
-        <div className="relative group hidden md:block">
-          {/* Left Scroll Button - Desktop Only */}
+        {/* Product Grid with Scroll Buttons - Desktop Only */}
+        <div className="relative group hidden lg:block">
+          {/* Left Scroll Button */}
           <button 
             onClick={scrollLeft}
-            className="absolute -left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 md:p-3 shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 opacity-0 group-hover:opacity-100 hidden lg:flex items-center justify-center"
+            className="absolute -left-6 xl:-left-8 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 md:p-3 lg:p-4 shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 opacity-0 group-hover:opacity-100 flex items-center justify-center"
           >
             <ChevronLeft size={20} className="text-gray-600" />
           </button>
 
-          {/* Right Scroll Button - Desktop Only */}
+          {/* Right Scroll Button */}
           <button 
             onClick={scrollRight}
-            className="absolute -right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 md:p-3 shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 opacity-0 group-hover:opacity-100 hidden lg:flex items-center justify-center"
+            className="absolute -right-6 xl:-right-8 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-2 md:p-3 lg:p-4 shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 opacity-0 group-hover:opacity-100 flex items-center justify-center"
           >
             <ChevronRight size={20} className="text-gray-600" />
           </button>
 
-          {/* Product Grid - Only 4 full cards visible */}
-          <div className="w-[1352px] mx-auto overflow-x-hidden">
+          {/* Product Grid - Responsive width */}
+          <div className="w-full overflow-x-hidden">
             <div 
               ref={scrollContainerRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide pb-6 px-0"
+              className="flex gap-4 lg:gap-6 xl:gap-8 overflow-x-auto scrollbar-hide pb-6 px-0"
               style={{ scrollSnapType: 'x mandatory' }}
             >
               {filteredProducts.map((product) => (
-                <div key={product._id} className="flex-shrink-0 w-80 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group/card" style={{ scrollSnapAlign: 'start' }}>
+                <div key={product._id} className="flex-shrink-0 w-72 lg:w-80 xl:w-96 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group/card" style={{ scrollSnapAlign: 'start' }}>
                   {/* Product Image Container */}
                   <div className="relative group/image">
                     <img
                       src={product.imageUrl}
                       alt={product.type}
-                      className="w-full h-96 object-cover rounded-t-xl"
+                      className="w-full h-80 lg:h-96 xl:h-[400px] object-cover rounded-t-xl"
                     />
                     {/* Heart Icon and Rating */}
-                    <div className="absolute top-4 right-4 flex items-center gap-3 z-20">
+                    <div className="absolute top-4 right-4 flex items-center gap-2 lg:gap-3 z-20">
                       <button className="bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors">
                         <Heart size={16} className="text-gray-600" />
                       </button>
-                      <div className="bg-white rounded-full px-3 py-2 shadow-md flex items-center gap-1">
+                      <div className="bg-white rounded-full px-2 lg:px-3 py-2 shadow-md flex items-center gap-1">
                         <Star size={12} className="text-yellow-400 fill-current" />
-                        <span className="text-sm font-semibold text-gray-700">{product.brand}</span>
+                        <span className="text-xs lg:text-sm font-semibold text-gray-700">{product.brand}</span>
                       </div>
                     </div>
-                    {/* Add to Cart Overlay - Desktop Only */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/image:bg-opacity-30 transition-all duration-300 rounded-t-xl flex items-end justify-center opacity-0 group-hover/image:opacity-100 hidden md:flex pointer-events-none">
-                      <button className="mb-4 bg-white text-gray-800 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 pointer-events-auto">
+                    {/* Add to Cart Overlay */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/image:bg-opacity-30 transition-all duration-300 rounded-t-xl flex items-end justify-center opacity-0 group-hover/image:opacity-100 pointer-events-none">
+                      <button className="mb-4 bg-white text-gray-800 px-3 lg:px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 pointer-events-auto text-sm lg:text-base">
                         <ShoppingCart size={16} />
                         Add to Cart
                       </button>
                     </div>
                   </div>
                   {/* Product Info */}
-                  <div className="p-6">
-                    <h3 className="text-base font-medium text-gray-800 mb-3 line-clamp-2 leading-relaxed">
+                  <div className="p-4 lg:p-6">
+                    <h3 className="text-sm lg:text-base font-medium text-gray-800 mb-2 lg:mb-3 line-clamp-2 leading-relaxed">
                       {product.type}
                     </h3>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xl font-bold text-gray-900">₹{product.price}</p>
+                        <p className="text-lg lg:text-xl xl:text-2xl font-bold text-gray-900">₹{product.price}</p>
                       </div>
                     </div>
                   </div>
@@ -302,8 +185,8 @@ export default function ProductSection() {
         </div>
 
         {/* View All Button */}
-        <div className="flex justify-center mt-8 md:mt-10">
-          <Link to="/all-products" className="bg-[#d6668c] text-white px-6 md:px-10 py-3 md:py-4 rounded-lg md:rounded-xl font-medium md:font-semibold text-base md:text-lg hover:bg-[#FFB3C1] transition-all duration-200 shadow-md md:shadow-lg hover:shadow-lg md:hover:shadow-xl">
+        <div className="flex justify-center mt-6 sm:mt-8 md:mt-10 lg:mt-12">
+          <Link to="/all-products" className="bg-[#d6668c] text-white px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-2 sm:py-3 md:py-4 lg:py-5 rounded-lg lg:rounded-xl font-medium lg:font-semibold text-sm sm:text-base md:text-lg lg:text-xl hover:bg-[#FFB3C1] transition-all duration-200 shadow-md lg:shadow-lg hover:shadow-lg lg:hover:shadow-xl">
             VIEW ALL
           </Link>
         </div>

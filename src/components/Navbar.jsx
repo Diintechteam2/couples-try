@@ -220,7 +220,7 @@ export default function Navbar({ categories = [] }) {
                 className="h-14 w-14 md:h-24 md:w-24 md:-mr-4 -mr-2 md:mt-3 mt-2"
                 style={{ borderRadius: "50%" }}
               />
-              <span className="text-2xl md:text-5xl font-serif text-[#d6668c] font-bold tracking-tight">
+              <span className="text-2xl md:text-5xl font-serif text-[#b73963] font-bold tracking-tight">
                 Couples Try
               </span>
             </Link>
@@ -301,16 +301,16 @@ export default function Navbar({ categories = [] }) {
       </nav>
 
       {/* Product Categories Section */}
-      <div className="w-full bg-[#FFC1CC] px-2 md:px-4 py-4 md:py-6">
-        <div className="flex md:justify-center justify-start items-center gap-2 md:gap-6 overflow-x-auto scrollbar-hide">
+      <div className="w-full bg-[#FFC1CC] px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-5 md:py-6 lg:py-8">
+        <div className="flex justify-start xl:justify-center items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 overflow-x-auto scrollbar-hide pb-2 pl-2 sm:pl-4 md:pl-6 lg:pl-6 xl:pl-0">
           {categoryItems.map((category) => (
             <Link 
               key={category.name} 
               to={`/category/${category.name}`}
-              className="flex flex-col items-center min-w-[22vw] max-w-[22vw] md:min-w-[100px] md:max-w-[120px] cursor-pointer hover:scale-105 transition-transform duration-200"
+              className="flex flex-col items-center flex-shrink-0 min-w-[80px] sm:min-w-[90px] md:min-w-[100px] lg:min-w-[120px] max-w-[80px] sm:max-w-[90px] md:max-w-[100px] lg:max-w-[120px] cursor-pointer hover:scale-105 transition-transform duration-200"
             >
               <div
-                className={`w-14 h-14 md:w-24 md:h-24 rounded-lg overflow-hidden mb-1 md:mb-2 ${category.special ? "bg-[#FF6B6B]" : "bg-white"} shadow-sm`}
+                className={`w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-lg overflow-hidden mb-1 sm:mb-1.5 md:mb-2 shadow-sm ${category.special ? "bg-[#FF6B6B]" : "bg-white"}`}
               >
                 <img
                   src={category.image || "/placeholder.svg"}
@@ -318,7 +318,7 @@ export default function Navbar({ categories = [] }) {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="text-[10px] md:text-sm font-medium text-gray-800 text-center">{category.name}</span>
+              <span className="text-[8px] sm:text-[10px] md:text-sm lg:text-base font-medium text-gray-800 text-center leading-tight">{category.name}</span>
             </Link>
           ))}
         </div>
