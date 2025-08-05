@@ -112,7 +112,7 @@ export default function Footer({ categories = [] }) {
                 </div>
               </div>
             </div>
-          </div> 
+          </div>  
 
           {/* Desktop Layout */}
           <div className="hidden xl:grid xl:grid-cols-4 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16">

@@ -8,7 +8,7 @@ const desktopImages = [
   "/heroimage-2.jpg",
 ]
 const mobileImages = [
-  "/heroimage.jpg",
+  "/heroimage.jpg", 
   "/heroimage-1.jpg", 
   "/heroimage-2.jpg",
 ]

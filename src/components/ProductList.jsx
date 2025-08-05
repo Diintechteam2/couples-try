@@ -261,7 +261,7 @@ export default function ProductList({ type }) {
             brandOptions={brandOptions}
             discountOptions={discountOptions}
             typeOptions={typeOptions}
-            selectedFilters={selectedFilters}
+            selectedFilters={selectedFilters} 
             handleFilterChange={handleFilterChange}
             categoriesWithTypes={categoriesWithTypes}
           />

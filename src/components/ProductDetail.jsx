@@ -295,7 +295,7 @@ export default function ProductDetail() {
               <div className="flex items-center gap-3">
                 <Shield size={20} className="text-blue-600" />
                 <span className="text-sm text-gray-600">Secure payment</span>
-              </div> 
+              </div>  
               <div className="flex items-center gap-3">
                 <RotateCcw size={20} className="text-orange-600" />
                 <span className="text-sm text-gray-600">Easy returns & exchanges</span>

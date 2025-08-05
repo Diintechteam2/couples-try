@@ -6,7 +6,7 @@ export default function BottomNav() {
   const [searchOpen, setSearchOpen] = useState(false)
 
   const openSearch = () => {
-    setSearchOpen(true)
+    setSearchOpen(true) 
   }
 
   const closeSearch = () => {

@@ -264,7 +264,7 @@ export default function AllProductsPage() {
                 <option value="price-high">Price: High to Low</option>
                 <option value="discount">Discount</option>
               </select>
-            </div>
+            </div> 
           </div>
 
           {/* Product Grid */}

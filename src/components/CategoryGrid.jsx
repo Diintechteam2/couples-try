@@ -90,7 +90,7 @@ export default function CategoryGrid({ categories = [] }) {
               className={`relative rounded-xl overflow-hidden shadow-md min-w-[80vw] max-w-[80vw] h-[240px] flex flex-col justify-end snap-center transition-all duration-500 ${i === active ? 'scale-100' : 'scale-95 opacity-80'}`}
             >
               <img 
-                src={categoryImages[i] || "/catagoryimage-1.webp"} 
+                src={categoryImages[i] || "/catagoryimage-1.webp"}  
                 alt={cat.name} 
                 className="absolute inset-0 w-full h-full object-fill z-0"  
                 draggable="false" 

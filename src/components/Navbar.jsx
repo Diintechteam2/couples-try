@@ -267,7 +267,7 @@ export default function Navbar({ categories = [] }) {
             <span className="cursor-pointer hidden md:inline-flex"><User size={20} /></span>
             {/* Search icon: always */}
             <span className="cursor-pointer" onClick={openSearch}><Search size={20} /></span>
-            {/* Heart icon: always */}
+            {/* Heart icon: always */} 
             <span className="cursor-pointer"><Heart size={20} /></span>
             {/* Cart icon: only md+ */}
             <span className="cursor-pointer hidden md:inline-flex"><ShoppingBag size={20} /></span>

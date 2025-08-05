@@ -248,7 +248,7 @@ export default function ProductSection() {
                       alt={product.type}
                       className="w-full h-80 lg:h-[300px] xl:h-[350px] object-cover rounded-t-xl"
                     />
-                    {/* Discount Badge */}
+                    {/* Discount Badge */} 
                     {product.originalPrice && getDiscount(product.price, product.originalPrice) && (
                       <div className="absolute top-4 left-4 bg-red-500 text-white text-xs registered font-bold px-2 py-1 rounded-full z-20">
                         {getDiscount(product.price, product.originalPrice)}% OFF

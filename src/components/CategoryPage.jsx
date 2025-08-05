@@ -252,7 +252,7 @@ export default function CategoryPage() {
           </div>
         )}
 
-        {/* Desktop Sidebar */}
+        {/* Desktop Sidebar */} 
         <aside className="hidden md:block w-64 bg-white border-r border-gray-200 p-6">
           <h2 className="text-lg font-semibold mb-6">Filters</h2>
           <FiltersSection 

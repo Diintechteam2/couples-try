@@ -33,7 +33,7 @@ function App() {
     fetchCategories()
   }, [])
 
-  return (
+  return ( 
     <Router> 
       <Navbar categories={categories} />
       <ScrollToTop />
