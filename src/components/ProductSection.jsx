@@ -42,6 +42,7 @@ export default function ProductSection() {
   }
 
   const handleProductClick = (productId) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     navigate(`/product/${productId}`)
   }
 
@@ -261,7 +262,7 @@ export default function ProductSection() {
                       <div className="bg-white rounded-full px-2 lg:px-3 py-2 shadow-md flex items-center gap-1">
                         <Star size={12} className="text-yellow-400 fill-current" />
                         <span className="text-xs lg:text-sm font-semibold text-gray-700">{product.brand}</span>
-                      </div>
+                      </div> 
                     </div>
                     {/* Add to Cart Overlay */}
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/image:bg-opacity-30 transition-all duration-300 rounded-t-xl flex items-end justify-center opacity-0 group-hover/image:opacity-100 pointer-events-none">
@@ -298,7 +299,11 @@ export default function ProductSection() {
 
         {/* View All Button */}
         <div className="flex justify-center mt-6 sm:mt-8 md:mt-10 lg:mt-12">
-          <Link to="/all-products" className="bg-[#d6668c] text-white px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-2 sm:py-3 md:py-4 lg:py-5 rounded-lg lg:rounded-xl font-medium lg:font-semibold text-sm sm:text-base md:text-lg lg:text-xl hover:bg-[#FFB3C1] transition-all duration-200 shadow-md lg:shadow-lg hover:shadow-lg lg:hover:shadow-xl">
+          <Link 
+            to="/all-products" 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="bg-[#d6668c] text-white px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-2 sm:py-3 md:py-4 lg:py-5 rounded-lg lg:rounded-xl font-medium lg:font-semibold text-sm sm:text-base md:text-lg lg:text-xl hover:bg-[#FFB3C1] transition-all duration-200 shadow-md lg:shadow-lg hover:shadow-lg lg:hover:shadow-xl"
+          >
             VIEW ALL
           </Link>
         </div>

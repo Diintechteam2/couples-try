@@ -86,6 +86,7 @@ export default function CategoryGrid({ categories = [] }) {
             <Link
               key={cat.id}
               to={`/category/${cat.name}`}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className={`relative rounded-xl overflow-hidden shadow-md min-w-[80vw] max-w-[80vw] h-[240px] flex flex-col justify-end snap-center transition-all duration-500 ${i === active ? 'scale-100' : 'scale-95 opacity-80'}`}
             >
               <img 
@@ -121,6 +122,7 @@ export default function CategoryGrid({ categories = [] }) {
         <div className="col-span-2 row-span-1 flex flex-col">
           <Link 
             to={`/category/${displayCategories[0]?.name}`} 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="relative rounded-xl overflow-hidden shadow-md flex-1 min-h-[400px] hover:scale-105 transition-transform duration-300"
           >
             <img 
@@ -139,6 +141,7 @@ export default function CategoryGrid({ categories = [] }) {
         <div className="col-span-1 row-span-1 flex flex-col">
           <Link 
             to={`/category/${displayCategories[1]?.name}`} 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="relative rounded-xl overflow-hidden shadow-md flex-1 min-h-[400px] hover:scale-105 transition-transform duration-300"
           >
             <img 
@@ -160,6 +163,7 @@ export default function CategoryGrid({ categories = [] }) {
           <div key={cat.id} className="col-span-1 row-span-1 flex flex-col">
             <Link 
               to={`/category/${cat.name}`} 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="relative rounded-xl overflow-hidden shadow-md flex-1 min-h-[400px] hover:scale-105 transition-transform duration-300"
             >
               <img 

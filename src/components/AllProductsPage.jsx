@@ -67,12 +67,25 @@ export default function AllProductsPage() {
         const brands = [...new Set(allProducts.map(p => p.brand))].filter(Boolean).map(b => ({ label: b, value: b }))
         const subcategories = [...new Set(allProducts.map(p => p.subcategory))].filter(Boolean).map(s => ({ label: s, value: s }))
         const types = [...new Set(allProducts.map(p => p.type))].filter(Boolean).map(t => ({ label: t, value: t }))
+        
+        // Extract categories from products and organize them with their types
+        const productCategories = [...new Set(allProducts.map(p => p.category))].filter(Boolean)
+        const categoriesWithTypes = productCategories.map(cat => {
+          const categoryProducts = allProducts.filter(p => p.category === cat)
+          const categoryTypes = [...new Set(categoryProducts.map(p => p.type))].filter(Boolean)
+          return {
+            name: cat,
+            types: categoryTypes.map(type => ({ label: type, value: type }))
+          }
+        })
 
         setFilterOptions(prev => ({
           ...prev,
           brands,
           subcategories,
-          types
+          types,
+          categories: productCategories.map(cat => ({ label: cat, value: cat })),
+          categoriesWithTypes
         }))
 
         setLoading(false)
@@ -262,8 +275,11 @@ export default function AllProductsPage() {
                 <div 
                   key={product._id} 
                   className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => navigate(`/product/${product._id}`)}
-                > 
+                  onClick={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                    navigate(`/product/${product._id}`)
+                  }}
+                >  
                   <div className="relative aspect-[8/9] sm:aspect-[9/10] overflow-hidden rounded-t-lg">
                     <img 
                       src={product.imageUrl} 
@@ -338,23 +354,44 @@ export default function AllProductsPage() {
 function FiltersSection({ filterOptions, selectedFilters, handleFilterChange }) {
   return (
     <div className="space-y-6">
-      {/* Category Filter */}
-      <div>
-        <h3 className="font-semibold mb-3">Category</h3>
-        <div className="space-y-2">
-          {filterOptions.categories.map(cat => (
-            <label key={cat.value} className="flex items-center">
-              <input
-                type="checkbox"
-                checked={selectedFilters.category.includes(cat.value)}
-                onChange={() => handleFilterChange('category', cat.value)}
-                className="mr-2"
-              />
-              <span className="text-sm">{cat.label}</span>
-            </label>
-          ))}
+      {/* Categories with Types */}
+      {filterOptions.categoriesWithTypes && filterOptions.categoriesWithTypes.length > 0 && (
+        <div>
+          <h3 className="font-semibold mb-3">Categories & Types</h3>
+          <div className="space-y-4">
+            {filterOptions.categoriesWithTypes.map(category => (
+              <div key={category.name} className="border-l-2 border-gray-200 pl-3">
+                <div className="mb-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedFilters.category.includes(category.name)}
+                      onChange={() => handleFilterChange('category', category.name)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm font-medium text-gray-800">{category.name}</span>
+                  </label>
+                </div>
+                {category.types.length > 0 && (
+                  <div className="ml-4 space-y-1">
+                    {category.types.map(type => (
+                      <label key={type.value} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedFilters.type.includes(type.value)}
+                          onChange={() => handleFilterChange('type', type.value)}
+                          className="mr-2"
+                        />
+                        <span className="text-xs text-gray-600">{type.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Subcategory Filter */}
       {filterOptions.subcategories.length > 0 && (
@@ -370,26 +407,6 @@ function FiltersSection({ filterOptions, selectedFilters, handleFilterChange }) 
                   className="mr-2"
                 />
                 <span className="text-sm">{sub.label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Type Filter */}
-      {filterOptions.types.length > 0 && (
-        <div>
-          <h3 className="font-semibold mb-3">Type</h3>
-          <div className="space-y-2">
-            {filterOptions.types.map(type => (
-              <label key={type.value} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedFilters.type.includes(type.value)}
-                  onChange={() => handleFilterChange('type', type.value)}
-                  className="mr-2"
-                />
-                <span className="text-sm">{type.label}</span>
               </label>
             ))}
           </div>

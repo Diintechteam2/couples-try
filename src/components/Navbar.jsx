@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { User, Search, Heart, ShoppingBag, Package, Menu, X, ChevronRight } from "lucide-react"
 import SearchDropdown from "./SearchDropdown"
 
@@ -122,8 +122,9 @@ export default function Navbar({ categories = [] }) {
     // Close dropdown when category is clicked
     setShowDropdown(null)
     setHoveredCategory(null)
-    // Navigate to category page with all products and filters
-    window.location.href = `/category/${category.name}`
+    // Scroll to top and navigate to category page
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    navigate(`/category/${category.name}`)
   }
 
   const openSearch = () => {
@@ -133,6 +134,8 @@ export default function Navbar({ categories = [] }) {
   const closeSearch = () => {
     setSearchOpen(false)
   }
+
+  const navigate = useNavigate()
 
   return (
     <>
@@ -166,7 +169,10 @@ export default function Navbar({ categories = [] }) {
                       <Link 
                         to={`/category/${item.name}`}
                         className="flex-1"
-                        onClick={() => setMenuOpen(false)}
+                        onClick={() => {
+                          setMenuOpen(false)
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
                       >
                         {item.name}
                       </Link>
@@ -189,7 +195,10 @@ export default function Navbar({ categories = [] }) {
                                 <ul>
                                   {sub.types && sub.types.map((type) => (
                                     <li key={type.id} className="mb-1">
-                                      <Link to={`category/${item.name}/subcategory/${sub.name}/type/${type.name}`} className="text-gray-700 hover:text-pink-600" onClick={() => setMenuOpen(false)}>
+                                      <Link to={`category/${item.name}/subcategory/${sub.name}/type/${type.name}`} className="text-gray-700 hover:text-pink-600" onClick={() => {
+                                        setMenuOpen(false)
+                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                      }}>
                                         {type.name}
                                       </Link>
                                     </li>
@@ -204,7 +213,10 @@ export default function Navbar({ categories = [] }) {
                           <ul>
                             {item.types.map((type) => (
                               <li key={type.id} className="mb-1">
-                                <Link to={`category/${item.name}/type/${type.name}`} className="text-gray-700 hover:text-pink-600" onClick={() => setMenuOpen(false)}>
+                                <Link to={`category/${item.name}/type/${type.name}`} className="text-gray-700 hover:text-pink-600" onClick={() => {
+                                  setMenuOpen(false)
+                                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                                }}>
                                   {type.name}
                                 </Link>
                               </li>
@@ -265,7 +277,7 @@ export default function Navbar({ categories = [] }) {
         <div className="hidden md:flex justify-center mt-10 relative">
           <ul className="flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm font-medium text-black">
             {categories.map((cat) => (
-              <li
+              <li 
                 key={cat.id}
                 className="cursor-pointer relative px-2"
                 onMouseEnter={() => handleCategoryMouseEnter(cat.id)}
@@ -290,7 +302,9 @@ export default function Navbar({ categories = [] }) {
                         <ul>
                           {sub.types && sub.types.map((type) => (
                             <li key={type.id} className="mb-2">
-                              <Link to={`category/${cat.name}/subcategory/${sub.name}/type/${type.name}`} className="text-gray-700 hover:text-pink-600">
+                              <Link to={`category/${cat.name}/subcategory/${sub.name}/type/${type.name}`} 
+                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                className="text-gray-700 hover:text-pink-600">
                                 {type.name}
                               </Link>
                             </li>
@@ -310,7 +324,9 @@ export default function Navbar({ categories = [] }) {
                     <ul>
                       {cat.types.map((type) => (
                         <li key={type.id} className="mb-2">
-                          <Link to={`category/${cat.name}/type/${type.name}`} className="text-gray-700 hover:text-pink-600">
+                          <Link to={`category/${cat.name}/type/${type.name}`} 
+                            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                            className="text-gray-700 hover:text-pink-600">
                             {type.name}
                           </Link>
                         </li>
@@ -339,6 +355,7 @@ export default function Navbar({ categories = [] }) {
             <Link 
               key={category.name} 
               to={`/category/${category.name}`}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="flex flex-col items-center flex-shrink-0 min-w-[80px] sm:min-w-[90px] md:min-w-[100px] lg:min-w-[120px] max-w-[80px] sm:max-w-[90px] md:max-w-[100px] lg:max-w-[120px] cursor-pointer hover:scale-105 transition-transform duration-200"
             >
               <div

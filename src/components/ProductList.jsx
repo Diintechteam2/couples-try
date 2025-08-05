@@ -8,6 +8,7 @@ export default function ProductList({ type }) {
   const { typeName, categoryName, subcategoryName } = useParams()
   const navigate = useNavigate()
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Store all products for filtering
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [pageTitle, setPageTitle] = useState("Products")
@@ -18,6 +19,7 @@ export default function ProductList({ type }) {
   const [priceOptions, setPriceOptions] = useState([])
   const [sortOptions, setSortOptions] = useState([])
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [categoriesWithTypes, setCategoriesWithTypes] = useState([])
   
   // Filter state
   const [selectedFilters, setSelectedFilters] = useState({
@@ -47,12 +49,37 @@ export default function ProductList({ type }) {
     setLoading(true)
     setError(null)
     
+    // Fetch all products for comprehensive filters
+    const fetchAllProducts = async () => {
+      try {
+        const allProductsResponse = await axios.get(`${API_BASE_URL}/clients/CLI746136Q0EY/dress/get`)
+        const allProducts = allProductsResponse.data.dresses || []
+        
+        // Extract categories from all products and organize them with their types
+        const productCategories = [...new Set(allProducts.map(d => d.category))].filter(Boolean)
+        const categoriesWithTypes = productCategories.map(cat => {
+          const categoryProducts = allProducts.filter(d => d.category === cat)
+          const categoryTypes = [...new Set(categoryProducts.map(d => d.type))].filter(Boolean)
+          return {
+            name: cat,
+            types: categoryTypes.map(type => ({ label: type, value: type }))
+          }
+        })
+        
+        setCategoriesWithTypes(categoriesWithTypes)
+        setAllProducts(allProducts) // Store all products
+      } catch (err) {
+        console.error("Failed to fetch all products for filters:", err)
+      }
+    }
+    
+    // Fetch current page products
     axios.get(url)
     .then(res => {
       const dresses = res.data.dresses || []
       setProducts(dresses)
     
-      // Extract unique filter options
+      // Extract unique filter options from current products
       const brands = [...new Set(dresses.map(d => d.brand))].map(b => ({ label: b, value: b }))
       const categories = [...new Set(dresses.map(d => d.category))].map(c => ({ label: c, value: c }))
       const types = [...new Set(dresses.map(d => d.type))].map(t => ({ label: t, value: t }))
@@ -78,10 +105,13 @@ export default function ProductList({ type }) {
       setPriceOptions(priceOptions)
       setLoading(false)
     })
-      .catch(err => {
-        setError("Failed to load products.")
-        setLoading(false)
-      })
+    .catch(err => {
+      setError("Failed to load products.")
+      setLoading(false)
+    })
+    
+    // Fetch all products for comprehensive filters
+    fetchAllProducts()
   }, [typeName, type, categoryName, subcategoryName])
 
   // Prevent body scrolling when mobile filters are open
@@ -112,41 +142,48 @@ export default function ProductList({ type }) {
   const handleSortChange = (e) => {console.log(e.target.value); setSort(e.target.value)}
 
   // Filtered products logic
-  const filteredProducts = products.filter(product => {
-    // Price filter
-    let priceMatch = true;
-    if (selectedFilters.price.length > 0) {
-      priceMatch = selectedFilters.price.some(range => {
-        if (range === "under-250") return product.price < 250;
-        if (range === "250-500") return product.price >= 250 && product.price <= 500;
-        if (range === "500-1000") return product.price > 500 && product.price <= 1000;
-        if (range === "above-1000") return product.price > 1000;
-        return true;
-      });
-    }
-    // Brand filter
-    let brandMatch = true;
-    if (selectedFilters.brand.length > 0) {
-      brandMatch = selectedFilters.brand.includes(product.brand);
-    }
-    // Category filter
-    let categoryMatch = true;
-    if (selectedFilters.category.length > 0) {
-      categoryMatch = selectedFilters.category.includes(product.category);
-    }
-    // Type filter
-    let typeMatch = true;
-    if (selectedFilters.type.length > 0) {
-      typeMatch = selectedFilters.type.includes(product.type);
-    }
-    // Discount filter (assume discount is calculated from originalPrice)
-    let discountMatch = true;
-    if (selectedFilters.discount.length > 0 && product.originalPrice) {
-      const discountPercent = Math.round(100 * (product.originalPrice - product.price) / product.originalPrice);
-      discountMatch = selectedFilters.discount.some(d => discountPercent >= parseInt(d));
-    }
-    return priceMatch && brandMatch && categoryMatch && typeMatch && discountMatch;
-  });
+  const filteredProducts = (() => {
+    // Determine which product set to filter
+    const productsToFilter = (selectedFilters.category.length > 0 || selectedFilters.type.length > 0) 
+      ? allProducts 
+      : products;
+    
+    return productsToFilter.filter(product => {
+      // Price filter
+      let priceMatch = true;
+      if (selectedFilters.price.length > 0) {
+        priceMatch = selectedFilters.price.some(range => {
+          if (range === "under-250") return product.price < 250;
+          if (range === "250-500") return product.price >= 250 && product.price <= 500;
+          if (range === "500-1000") return product.price > 500 && product.price <= 1000;
+          if (range === "above-1000") return product.price > 1000;
+          return true;
+        });
+      }
+      // Brand filter
+      let brandMatch = true;
+      if (selectedFilters.brand.length > 0) {
+        brandMatch = selectedFilters.brand.includes(product.brand);
+      }
+      // Category filter
+      let categoryMatch = true;
+      if (selectedFilters.category.length > 0) {
+        categoryMatch = selectedFilters.category.includes(product.category);
+      }
+      // Type filter
+      let typeMatch = true;
+      if (selectedFilters.type.length > 0) {
+        typeMatch = selectedFilters.type.includes(product.type);
+      }
+      // Discount filter (assume discount is calculated from originalPrice)
+      let discountMatch = true;
+      if (selectedFilters.discount.length > 0 && product.originalPrice) {
+        const discountPercent = Math.round(100 * (product.originalPrice - product.price) / product.originalPrice);
+        discountMatch = selectedFilters.discount.some(d => discountPercent >= parseInt(d));
+      }
+      return priceMatch && brandMatch && categoryMatch && typeMatch && discountMatch;
+    });
+  })();
 
   // Sorting logic
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -208,6 +245,7 @@ export default function ProductList({ type }) {
                   typeOptions={typeOptions}
                   selectedFilters={selectedFilters}
                   handleFilterChange={handleFilterChange}
+                  categoriesWithTypes={categoriesWithTypes}
                 />
               </div>
             </div>
@@ -225,6 +263,7 @@ export default function ProductList({ type }) {
             typeOptions={typeOptions}
             selectedFilters={selectedFilters}
             handleFilterChange={handleFilterChange}
+            categoriesWithTypes={categoriesWithTypes}
           />
         </aside>
 
@@ -236,7 +275,7 @@ export default function ProductList({ type }) {
             <h1 className="text-2xl font-bold mb-1">{pageTitle}</h1>
             
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <p className="text-gray-600">Showing {filteredProducts.length} of {products.length} products</p>
+              <p className="text-gray-600">Showing {filteredProducts.length} of {(selectedFilters.category.length > 0 || selectedFilters.type.length > 0) ? allProducts.length : products.length} products</p>
               <select 
                 value={sort} 
                 onChange={handleSortChange} 
@@ -255,13 +294,16 @@ export default function ProductList({ type }) {
             {sortedProducts.map((product) => {
               const discount = getDiscount(product.price, product.originalPrice);
               return (
-                <div key={product._id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
+                <div key={product._id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                  navigate(`/product/${product._id}`)
+                }}>
                   <div className="relative aspect-[9/10] sm:aspect-[9/10] overflow-hidden rounded-t-lg">
                     <img 
                       src={product.imageUrl} 
                       alt={product.description} 
                       className="w-full h-full object-fill" 
-                    />
+                    /> 
                     {discount && (
                       <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                         {discount}% OFF
@@ -317,25 +359,45 @@ function FiltersSection({
   discountOptions, 
   typeOptions, 
   selectedFilters, 
-  handleFilterChange 
+  handleFilterChange,
+  categoriesWithTypes
 }) {
   return (
     <div className="space-y-6">
-      {/* Category Filter */}
-      {categoryOptions.length > 0 && (
+      {/* Categories with Types */}
+      {categoriesWithTypes && categoriesWithTypes.length > 0 && (
         <div>
-          <h3 className="font-semibold mb-3">Category</h3>
-          <div className="space-y-2">
-            {categoryOptions.map(opt => (
-              <label key={opt.value} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedFilters.category.includes(opt.value)}
-                  onChange={() => handleFilterChange('category', opt.value)}
-                  className="mr-2"
-                />
-                <span className="text-sm">{opt.label}</span>
-              </label>
+          <h3 className="font-semibold mb-3">Categories & Types</h3>
+          <div className="space-y-4">
+            {categoriesWithTypes.map(category => (
+              <div key={category.name} className="border-l-2 border-gray-200 pl-3">
+                <div className="mb-2">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedFilters.category.includes(category.name)}
+                      onChange={() => handleFilterChange('category', category.name)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm font-medium text-gray-800">{category.name}</span>
+                  </label>
+                </div>
+                {category.types.length > 0 && (
+                  <div className="ml-4 space-y-1">
+                    {category.types.map(type => (
+                      <label key={type.value} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedFilters.type.includes(type.value)}
+                          onChange={() => handleFilterChange('type', type.value)}
+                          className="mr-2"
+                        />
+                        <span className="text-xs text-gray-600">{type.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>
@@ -396,26 +458,6 @@ function FiltersSection({
           ))}
         </div>
       </div>
-
-      {/* Type Filter */}
-      {typeOptions.length > 0 && ( 
-        <div>
-          <h3 className="font-semibold mb-3">Type</h3>
-          <div className="space-y-2">
-            {typeOptions.map(opt => (
-              <label key={opt.value} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedFilters.type.includes(opt.value)}
-                  onChange={() => handleFilterChange('type', opt.value)}
-                  className="mr-2"
-                />
-                <span className="text-sm">{opt.label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 } 

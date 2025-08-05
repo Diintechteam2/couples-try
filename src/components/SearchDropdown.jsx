@@ -172,6 +172,7 @@ export default function SearchDropdown({
                       <div
                         key={product._id}
                         onClick={() => {
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
                           navigate(`/product/${product._id}`)
                           closeSearch()
                         }}
@@ -235,7 +236,10 @@ export default function SearchDropdown({
           <div className="p-4 border-t border-gray-200 bg-white">
             <Link
               to="/all-products"
-              onClick={closeSearch}
+              onClick={() => {
+                closeSearch()
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
               className="block w-full text-center bg-[#d6668c] text-white px-4 py-3 rounded-lg font-medium text-sm hover:bg-[#FFB3C1] transition-all duration-200"
             >
               VIEW ALL PRODUCTS ({searchResults.length})

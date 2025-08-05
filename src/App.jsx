@@ -11,6 +11,7 @@ import CategoryPage from './components/CategoryPage'
 import AllProductsPage from './components/AllProductsPage'
 import ProductDetail from './components/ProductDetail'
 import Home from './components/Home'
+import ScrollToTop from './components/ScrollToTop'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { API_BASE_URL } from './config'
@@ -35,6 +36,7 @@ function App() {
   return (
     <Router> 
       <Navbar categories={categories} />
+      <ScrollToTop />
       <Routes>
         {/* Add your other routes here */}
         <Route path="/" index="/" element={<Home categories={categories} />} />
