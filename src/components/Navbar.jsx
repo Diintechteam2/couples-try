@@ -60,6 +60,20 @@ export default function Navbar({ categories = [] }) {
     }
   }, [])
 
+  // Prevent body scrolling when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [menuOpen])
+
   const handleCategoryMouseEnter = (catId) => {
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
     setHoveredCategory(catId)

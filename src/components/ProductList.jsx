@@ -84,6 +84,20 @@ export default function ProductList({ type }) {
       })
   }, [typeName, type, categoryName, subcategoryName])
 
+  // Prevent body scrolling when mobile filters are open
+  useEffect(() => {
+    if (showMobileFilters) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showMobileFilters])
+
   // Filter handler
   const handleFilterChange = (filterKey, value) => {
     setSelectedFilters((prev) => {
@@ -172,9 +186,9 @@ export default function ProductList({ type }) {
       <div className="flex flex-col md:flex-row">
         {/* Mobile Filters Overlay */}
         {showMobileFilters && (
-          <div className="md:hidden fixed inset-0 z-50 bg-black bg-opacity-50">
-            <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-xl">
-              <div className="p-4 border-b border-gray-200">
+          <div className="md:hidden fixed inset-0 z-50 bg-black bg-opacity-50 overflow-hidden">
+            <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-xl flex flex-col">
+              <div className="p-4 border-b border-gray-200 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold">Filters</h2>
                   <button
@@ -185,7 +199,7 @@ export default function ProductList({ type }) {
                   </button>
                 </div>
               </div>
-              <div className="p-4 overflow-y-auto h-full">
+              <div className="flex-1 overflow-y-auto p-4">
                 <FiltersSection 
                   categoryOptions={categoryOptions}
                   priceOptions={priceOptions}
@@ -242,7 +256,7 @@ export default function ProductList({ type }) {
               const discount = getDiscount(product.price, product.originalPrice);
               return (
                 <div key={product._id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg">
+                  <div className="relative aspect-[9/10] sm:aspect-[9/10] overflow-hidden rounded-t-lg">
                     <img 
                       src={product.imageUrl} 
                       alt={product.description} 

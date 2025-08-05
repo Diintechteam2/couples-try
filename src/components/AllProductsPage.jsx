@@ -85,6 +85,20 @@ export default function AllProductsPage() {
     fetchData()
   }, [])
 
+  // Prevent body scrolling when mobile filters are open
+  useEffect(() => {
+    if (showMobileFilters) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showMobileFilters])
+
   // Filter handler
   const handleFilterChange = (filterKey, value) => {
     setSelectedFilters((prev) => {
@@ -185,9 +199,9 @@ export default function AllProductsPage() {
       <div className="flex flex-col md:flex-row">
         {/* Mobile Filters Overlay */}
         {showMobileFilters && (
-          <div className="md:hidden fixed inset-0 z-50 bg-black bg-opacity-50">
-            <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-xl">
-              <div className="p-4 border-b border-gray-200">
+          <div className="md:hidden fixed inset-0 z-50 bg-black bg-opacity-50 overflow-hidden">
+            <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-xl flex flex-col">
+              <div className="p-4 border-b border-gray-200 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold">Filters</h2>
                   <button
@@ -198,7 +212,7 @@ export default function AllProductsPage() {
                   </button>
                 </div>
               </div>
-              <div className="p-4 overflow-y-auto h-full">
+              <div className="flex-1 overflow-y-auto p-4">
                 <FiltersSection 
                   filterOptions={filterOptions}
                   selectedFilters={selectedFilters}
@@ -250,7 +264,7 @@ export default function AllProductsPage() {
                   className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => navigate(`/product/${product._id}`)}
                 > 
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg">
+                  <div className="relative aspect-[8/9] sm:aspect-[9/10] overflow-hidden rounded-t-lg">
                     <img 
                       src={product.imageUrl} 
                       alt={product.type} 
@@ -262,19 +276,47 @@ export default function AllProductsPage() {
                       </span>
                     )}
                   </div>
-                  <div className="p-4">
-                    <div className="text-xs text-gray-500 mb-1 font-semibold">{product.brand}</div>
-                    <h3 className="font-medium text-sm mb-2 line-clamp-2">{product.type}</h3>
-                    {product.subcategory && (
-                      <div className="text-xs text-blue-600 mb-2">{product.subcategory}</div>
+                  <div className="p-2 sm:p-4">
+                    {/* Brand */}
+                    {product.brand && (
+                      <div className="text-xs text-gray-500 mb-1 font-semibold">{product.brand}</div>
                     )}
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-bold text-lg text-pink-700">₹{product.price}</span>
+                    {/* Type/Title */}
+                    <div className="font-medium text-sm mb-1 line-clamp-2">{product.type}</div>
+                    {/* Description */}
+                    {product.description && (
+                      <div className="text-xs text-gray-600 mb-1 line-clamp-2">{product.description}</div>
+                    )}
+                    {/* Subcategory */}
+                    {product.subcategory && (
+                      <div className="text-xs text-blue-600 mb-1">{product.subcategory}</div>
+                    )}
+                    {/* Price and Original Price */}
+                    <div className="flex items-center gap-2 mb-1 sm:mb-2">
+                      <span className="font-bold text-base sm:text-lg text-pink-700">₹{product.price}</span>
                       {product.originalPrice && (
-                        <span className="text-sm text-gray-400 line-through">₹{product.originalPrice}</span>
+                        <span className="text-xs sm:text-sm text-gray-400 line-through">₹{product.originalPrice}</span>
                       )}
                     </div>
+                    {/* Free Delivery */}
                     <div className="text-xs text-green-700 font-semibold">Free Delivery</div>
+                    {/* Rating and Reviews */}
+                    <div className="flex items-center gap-1 text-xs mt-1 sm:mt-2">
+                      <span className="bg-green-500 text-white rounded px-1.5 py-0.5 font-bold">{product.rating || '3.9'}</span>
+                      <span className="text-gray-500">{product.reviews || '1000'} Reviews</span>
+                    </div>
+                    {/* Sizes */}
+                    {product.sizes && product.sizes.filter(s => s.selected).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1 sm:mt-2">
+                        {product.sizes.filter(s => s.selected).map(s => (
+                          <span key={s.size} className="border border-pink-300 rounded px-2 py-0.5 text-xs">{s.size}</span>
+                        ))}
+                      </div>
+                    )}
+                    {/* Stock Status */}
+                    {product.stockStatus && (
+                      <div className="text-xs text-orange-600 font-semibold mt-1 sm:mt-2">{product.stockStatus}</div>
+                    )}
                   </div>
                 </div>
               );

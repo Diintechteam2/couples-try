@@ -45,6 +45,12 @@ export default function ProductSection() {
     navigate(`/product/${productId}`)
   }
 
+  // Discount calculation function
+  const getDiscount = (price, originalPrice) => {
+    if (!price || !originalPrice || originalPrice <= price) return null;
+    return Math.round(((originalPrice - price) / originalPrice) * 100);
+  };
+
   return (
     <section className="w-full bg-white py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12">
       <div className="max-w-6xl lg:max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto">
@@ -85,17 +91,32 @@ export default function ProductSection() {
                   className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(25vw-18px)] md:w-[calc(25vw-20px)] bg-white rounded-xl shadow p-2 flex flex-col items-start cursor-pointer hover:shadow-lg transition-shadow"
                   onClick={() => handleProductClick(product._id)}
                 >
-                  <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                  <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden relative">
                     <img
                       src={product.imageUrl}
                       alt={product.type}
                       className="w-full h-full object-fill"
                     />
+                    {product.originalPrice && getDiscount(product.price, product.originalPrice) && (
+                      <div className="absolute top-0 left-0 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded z-10">
+                        {getDiscount(product.price, product.originalPrice)}% OFF
+                      </div>
+                    )}
                   </div>
                   <div className="w-full">
                     <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
-                    <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
-                      ₹{product.price}
+                    {product.description && (
+                      <div className="text-[10px] sm:text-[11px] text-gray-600 truncate mb-1">{product.description.length > 25 ? product.description.slice(0, 25) + '...' : product.description}</div>
+                    )}
+                    <div className="flex items-center gap-1 mb-1">
+                      <div className="text-[11px] sm:text-[13px] font-bold text-black">
+                        ₹{product.price}
+                      </div>
+                      {product.originalPrice && product.originalPrice > product.price && (
+                        <div className="text-[10px] sm:text-[11px] text-gray-400 line-through">
+                          ₹{product.originalPrice}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -114,17 +135,32 @@ export default function ProductSection() {
                     className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(25vw-18px)] md:w-[calc(25vw-20px)] bg-white rounded-xl shadow p-2 flex flex-col items-start cursor-pointer hover:shadow-lg transition-shadow"
                     onClick={() => handleProductClick(product._id)}
                   >
-                    <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden relative">
                       <img
                         src={product.imageUrl}
                         alt={product.type}
                         className="w-full h-full object-fill"
                       />
+                      {product.originalPrice && getDiscount(product.price, product.originalPrice) && (
+                        <div className="absolute top-0 left-0 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded z-10">
+                          {getDiscount(product.price, product.originalPrice)}% OFF
+                        </div>
+                      )}
                     </div>
                     <div className="w-full">
                       <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
-                      <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
-                        ₹{product.price}
+                      {product.description && (
+                        <div className="text-[10px] sm:text-[11px] text-gray-600 truncate mb-1">{product.description.length > 25 ? product.description.slice(0, 25) + '...' : product.description}</div>
+                      )}
+                      <div className="flex items-center gap-1 mb-1">
+                        <div className="text-[11px] sm:text-[13px] font-bold text-black">
+                          ₹{product.price}
+                        </div>
+                        {product.originalPrice && product.originalPrice > product.price && (
+                          <div className="text-[10px] sm:text-[11px] text-gray-400 line-through">
+                            ₹{product.originalPrice}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -137,17 +173,32 @@ export default function ProductSection() {
                     className="flex-shrink-0 w-[calc(50vw-24px)] sm:w-[calc(25vw-18px)] md:w-[calc(25vw-20px)] bg-white rounded-xl shadow p-2 flex flex-col items-start cursor-pointer hover:shadow-lg transition-shadow"
                     onClick={() => handleProductClick(product._id)}
                   >
-                    <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-32 sm:h-28 md:h-32 mb-2 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden relative">
                       <img
                         src={product.imageUrl}
                         alt={product.type}
                         className="w-full h-full object-fill"
                       />
+                      {product.originalPrice && getDiscount(product.price, product.originalPrice) && (
+                        <div className="absolute top-2 left-2 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded z-10">
+                          {getDiscount(product.price, product.originalPrice)}% OFF
+                        </div>
+                      )}
                     </div>
                     <div className="w-full">
                       <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate mb-1">{product.type.length > 20 ? product.type.slice(0, 20) + '...' : product.type}</div>
-                      <div className="text-[11px] sm:text-[13px] font-bold text-black mt-1">
-                        ₹{product.price}
+                      {product.description && (
+                        <div className="text-[10px] sm:text-[11px] text-gray-600 truncate mb-1">{product.description.length > 25 ? product.description.slice(0, 25) + '...' : product.description}</div>
+                      )}
+                      <div className="flex items-center gap-1 mb-1">
+                        <div className="text-[11px] sm:text-[13px] font-bold text-black">
+                          ₹{product.price}
+                        </div>
+                        {product.originalPrice && product.originalPrice > product.price && (
+                          <div className="text-[10px] sm:text-[11px] text-gray-400 line-through">
+                            ₹{product.originalPrice}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -185,7 +236,7 @@ export default function ProductSection() {
               {filteredProducts.map((product) => (
                 <div 
                   key={product._id} 
-                  className="flex-shrink-0 w-72 lg:w-80 xl:w-96 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group/card cursor-pointer" 
+                  className="flex-shrink-0 w-72 lg:w-75 xl:w-80 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group/card cursor-pointer" 
                   style={{ scrollSnapAlign: 'start' }}
                   onClick={() => handleProductClick(product._id)}
                 >
@@ -194,8 +245,14 @@ export default function ProductSection() {
                     <img
                       src={product.imageUrl}
                       alt={product.type}
-                      className="w-full h-80 lg:h-96 xl:h-[400px] object-cover rounded-t-xl"
+                      className="w-full h-80 lg:h-[300px] xl:h-[350px] object-cover rounded-t-xl"
                     />
+                    {/* Discount Badge */}
+                    {product.originalPrice && getDiscount(product.price, product.originalPrice) && (
+                      <div className="absolute top-4 left-4 bg-red-500 text-white text-xs registered font-bold px-2 py-1 rounded-full z-20">
+                        {getDiscount(product.price, product.originalPrice)}% OFF
+                      </div>
+                    )}
                     {/* Heart Icon and Rating */}
                     <div className="absolute top-4 right-4 flex items-center gap-2 lg:gap-3 z-20">
                       <button className="bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition-colors">
@@ -219,9 +276,17 @@ export default function ProductSection() {
                     <h3 className="text-sm lg:text-base font-medium text-gray-800 mb-2 lg:mb-3 line-clamp-2 leading-relaxed">
                       {product.type}
                     </h3>
-                    <div className="flex items-center justify-between">
-                      <div>
+                    {product.description && (
+                      <p className="text-xs lg:text-sm text-gray-600 mb-2 lg:mb-3 line-clamp-2 leading-relaxed">
+                        {product.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2">
                         <p className="text-lg lg:text-xl xl:text-2xl font-bold text-gray-900">₹{product.price}</p>
+                        {product.originalPrice && product.originalPrice > product.price && (
+                          <p className="text-sm lg:text-base text-gray-400 line-through">₹{product.originalPrice}</p>
+                        )}
                       </div>
                     </div>
                   </div>

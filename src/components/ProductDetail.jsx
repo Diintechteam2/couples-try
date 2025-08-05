@@ -150,17 +150,17 @@ export default function ProductDetail() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {/* Product Images */}
           <div className="space-y-4">
-            <div className="relative aspect-square bg-white rounded-lg overflow-hidden shadow-sm">
+            <div className="relative aspect-square bg-white rounded-lg overflow-hidden shadow-sm lg:max-w-md lg:mx-auto">
               <img
                 src={product.imageUrl}
                 alt={product.type}
                 className="w-full h-full object-cover"
               />
               {/* Navigation arrows for multiple images */}
-              {product.imageUrl && (
+              {/* {product.imageUrl && (
                 <>
                   <button
                     onClick={prevImage}
@@ -175,7 +175,7 @@ export default function ProductDetail() {
                     <ChevronRight size={16} />
                   </button>
                 </>
-              )}
+              )} */}
               {/* Discount badge */}
               {discount && (
                 <span className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
@@ -196,6 +196,14 @@ export default function ProductDetail() {
               )}
             </div>
 
+            {/* Product Details */}
+            {product.description && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Product Details</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{product.description}</p>
+              </div>
+            )}
+
             {/* Rating */}
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
@@ -208,27 +216,27 @@ export default function ProductDetail() {
             {/* Price */}
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <span className="text-3xl font-bold text-gray-900">₹{product.price}</span>
+                <span className="text-2xl font-bold text-gray-900">₹{product.price}</span>
                 {product.originalPrice && (
-                  <span className="text-xl text-gray-400 line-through">₹{product.originalPrice}</span>
+                  <span className="text-lg text-gray-400 line-through">₹{product.originalPrice}</span>
                 )}
                 {discount && (
-                  <span className="text-sm font-semibold text-green-600">{discount}% off</span>
+                  <span className="text-xs font-semibold text-green-600">{discount}% off</span>
                 )}
               </div>
-              <p className="text-sm text-green-600 font-semibold">Free Delivery</p>
+              <p className="text-xs text-green-600 font-semibold">Free Delivery</p>
             </div>
 
             {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-3">Select Size</h3>
+                <h3 className="text-base font-semibold mb-3">Select Size</h3>
                 <div className="grid grid-cols-4 gap-2">
                   {product.sizes.map((size) => (
                     <button
                       key={size.size}
                       onClick={() => setSelectedSize(size.size)}
-                      className={`p-3 border-2 rounded-lg text-sm font-medium transition-colors ${
+                      className={`p-2 border-2 rounded-lg text-xs font-medium transition-colors ${
                         selectedSize === size.size
                           ? 'border-pink-500 bg-pink-50 text-pink-700'
                           : size.selected
@@ -246,18 +254,18 @@ export default function ProductDetail() {
 
             {/* Quantity */}
             <div>
-              <h3 className="text-lg font-semibold mb-3">Quantity</h3>
+              <h3 className="text-base font-semibold mb-3">Quantity</h3>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
+                  className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 text-sm"
                 >
                   -
                 </button>
-                <span className="w-16 text-center font-semibold">{quantity}</span>
+                <span className="w-12 text-center font-semibold text-sm">{quantity}</span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
+                  className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 text-sm"
                 >
                   +
                 </button>
@@ -265,15 +273,15 @@ export default function ProductDetail() {
             </div>
 
             {/* Add to Cart Button */}
-            <div className="space-y-3">
+            <div className="space-y-3 lg:space-y-0 lg:flex lg:gap-3">
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-pink-500 text-white py-4 rounded-lg font-semibold text-lg hover:bg-pink-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full lg:flex-1 bg-pink-500 text-white py-3 rounded-lg font-semibold text-base hover:bg-pink-600 transition-colors flex items-center justify-center gap-2"
               >
-                <ShoppingCart size={20} />
+                <ShoppingCart size={18} />
                 Add to Cart
               </button>
-              <button className="w-full border-2 border-pink-500 text-pink-500 py-4 rounded-lg font-semibold text-lg hover:bg-pink-50 transition-colors">
+              <button className="w-full lg:flex-1 border-2 border-pink-500 text-pink-500 py-3 rounded-lg font-semibold text-base hover:bg-pink-50 transition-colors">
                 Buy Now
               </button>
             </div>
@@ -293,14 +301,6 @@ export default function ProductDetail() {
                 <span className="text-sm text-gray-600">Easy returns & exchanges</span>
               </div>
             </div>
-
-            {/* Product Details */}
-            {product.description && (
-              <div className="pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-semibold mb-3">Product Details</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{product.description}</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

@@ -1,8 +1,17 @@
 import { Truck, CreditCard, Shirt, Package, Mail, Phone, MessageCircle } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Footer({ categories = [] }) {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (categoryName) => {
+    // Scroll to top before navigating
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Navigate to category page
+    navigate(`/category/${categoryName}`);
+  };
+
   return (
     <footer className="w-full bg-white">
       {/* Top Row: Features as Cards */}
@@ -56,9 +65,12 @@ export default function Footer({ categories = [] }) {
                   {categories && categories.length > 0 ? (
                     categories.map((cat) => (
                       <li key={cat.id}>
-                        <Link to={`category/${cat.name}`} className="hover:text-pink-600 transition-colors">
+                        <button 
+                          onClick={() => handleCategoryClick(cat.name)}
+                          className="hover:text-pink-600 transition-colors cursor-pointer text-left"
+                        >
                           {cat.name}
-                        </Link>
+                        </button>
                       </li>
                     ))
                   ) : (
@@ -124,9 +136,12 @@ export default function Footer({ categories = [] }) {
                 {categories && categories.length > 0 ? (
                   categories.map((cat) => (
                     <li key={cat.id}>
-                      <Link to={`category/${cat.name}`} className="hover:text-pink-600 transition-colors">
+                      <button 
+                        onClick={() => handleCategoryClick(cat.name)}
+                        className="hover:text-pink-600 transition-colors cursor-pointer text-left"
+                      >
                         {cat.name}
-                      </Link>
+                      </button>
                     </li>
                   ))
                 ) : (
