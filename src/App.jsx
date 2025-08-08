@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
 import HeroSection from './components/HeroSection'
@@ -15,14 +15,19 @@ import ScrollToTop from './components/ScrollToTop'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { API_BASE_URL } from './config'
+import Admin from './Admin'
+import User from './User'
 
-function App() {
+function AppContent() {
   const [categories, setCategories] = useState([])
+  const location = useLocation()
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/clients/CLI746136Q0EY/dress/categories`)
+        const response = await axios.get(
+          `${API_BASE_URL}/clients/CLI746136Q0EY/dress/categories`
+        )
         if (response.data.success) {
           setCategories(response.data.categories)
         }
@@ -33,21 +38,45 @@ function App() {
     fetchCategories()
   }, [])
 
-  return ( 
-    <Router> 
+  // Check if current path starts with /admin
+  const isAdminRoute = location.pathname.startsWith('/admin')
+  const isUserRoute = location.pathname.startsWith('/auth')
+
+
+  return (isAdminRoute) ? (
+    <Routes>
+      <Route path="/admin/*" element={<Admin />} />
+    </Routes>
+  ): (isUserRoute) ?
+  (<Routes>
+    <Route path="/auth/*" element={<User />} />
+  </Routes>): (
+    <>
       <Navbar categories={categories} />
       <ScrollToTop />
       <Routes>
-        {/* Add your other routes here */}
-        <Route path="/" index="/" element={<Home categories={categories} />} />
+        <Route path="/" element={<Home categories={categories} />} />
         <Route path="/category/:categoryName" element={<CategoryPage />} />
         <Route path="/all-products" element={<AllProductsPage />} />
         <Route path="/product/:productId" element={<ProductDetail />} />
-        {/* <Route path="/category/:categoryName/subcategory/:subcategoryName" element={<ProductList type="subcategory" />} /> */}
-        <Route path="/category/:categoryName/subcategory/:subcategoryName/type/:typeName" element={<ProductList type="type" />} />
-        <Route path="/category/:categoryName/type/:typeName" element={<ProductList type="type" />} />
+        <Route
+          path="/category/:categoryName/subcategory/:subcategoryName/type/:typeName"
+          element={<ProductList type="type" />}
+        />
+        <Route
+          path="/category/:categoryName/type/:typeName"
+          element={<ProductList type="type" />}
+        />
       </Routes>
       <Footer categories={categories} />
+    </>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   )
 }

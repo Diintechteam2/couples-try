@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import { User, Search, Heart, ShoppingBag, Package, Menu, X, ChevronRight } from "lucide-react"
 import SearchDropdown from "./SearchDropdown"
 
@@ -264,7 +264,8 @@ export default function Navbar({ categories = [] }) {
           {/* Icons - Right */}
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6">
             {/* User icon: only md+ */}
-            <span className="cursor-pointer hidden md:inline-flex"><User size={20} /></span>
+            <NavLink to="/auth" className="cursor-pointer hidden md:inline-flex"
+            ><User size={20}/></NavLink>
             {/* Search icon: always */}
             <span className="cursor-pointer" onClick={openSearch}><Search size={20} /></span>
             {/* Heart icon: always */} 
