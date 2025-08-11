@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import AuthLayout from './components/auth/AuthLayout';
-import UserDashboard from '../../frontend/src/component/dashboards/UserDashboard';
+import UserDashboard from './components/dashboards/UserDashboard';
 
 const User = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
