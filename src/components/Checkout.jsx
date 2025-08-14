@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, CreditCard, Truck, CheckCircle } from "lucide-react";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
+import AddressForm from "./Addressform";
 
 export default function Checkout() {
   const [loading, setLoading] = useState(false);
@@ -10,6 +11,7 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [deliveryAddress, setDeliveryAddress] = useState({});
   const [user,setUser]=useState(null)
+  const [showAddressForm, setShowAddressForm] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -103,6 +105,36 @@ export default function Checkout() {
       setLoading(false);
     }
   };
+
+  const handleAddressSave = async (addressData) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/clients/CLI746136Q0EY/mobile/user/address`, {
+        address: addressData.address,
+        city: addressData.city,
+        pincode: addressData.pincode,
+        state: addressData.state,
+        landmark: addressData.landmark,
+        mobileNo: addressData.mobileNo
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Address save response:", response.data);
+      if (response.data.success) {
+        alert("Address saved successfully!");
+        setShowAddressForm(false); // Close the modal on success
+        // Refresh user profile to get the updated address
+        await fetchUserProfile();
+      } else {
+        alert("Failed to save address: " + (response.data.message || "Unknown error"));
+      }
+    } 
+    catch (error) {
+      console.error("Error saving address:", error);
+      alert("Failed to save address: " + (error.message || "Network error"));
+    }
+  }
 
   const fetchUserProfile = async () => {
     try {
@@ -209,7 +241,7 @@ console.log(deliveryAddress)
                 <div className="text-center py-8">
                   <p className="text-gray-500 mb-3">No delivery address found</p>
                   <button 
-                    onClick={() => navigate('/profile')}
+                    onClick={() => setShowAddressForm(true)}
                     className="text-pink-500 hover:text-pink-600 font-medium"
                   >
                     Add Delivery Address
@@ -328,6 +360,12 @@ console.log(deliveryAddress)
           </div>
         </div>
       </div>
+      {showAddressForm && (
+        <AddressForm
+          onSubmit={handleAddressSave}
+          onCancel={() => setShowAddressForm(false)}
+        />
+      )}
     </div>
   );
 }
