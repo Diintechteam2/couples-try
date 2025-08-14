@@ -28,22 +28,22 @@ const LoginForm = ({ onLogin, switchToRegister }) => {
       console.log("google token",credentialResponse.credential);
       let response; // <-- declare response here
       // This endpoint will handle both client and user types based on userType prop
-      if(userType === "client")
-      {
-        const endpoint = `${API_BASE_URL}/${userType}/google-login`;
+      // if(userType === "client")
+      // {
+      //   const endpoint = `${API_BASE_URL}/${userType}/google-login`;
+      //   response = await axios.post(endpoint, {
+      //     token: credentialResponse.credential,
+      //   });
+      //   console.log('Server response:', response.data);
+      // }
+      // if(userType === "user")
+      // {
+        const endpoint = `${API_BASE_URL}/clients/CLI746136Q0EY/mobile/user/google-login`;
         response = await axios.post(endpoint, {
           token: credentialResponse.credential,
         });
         console.log('Server response:', response.data);
-      }
-      if(userType === "user")
-      {
-        const endpoint = `${API_BASE_URL}/clients/CLI6781413BO1/mobile/${userType}/google-login`;
-        response = await axios.post(endpoint, {
-          token: credentialResponse.credential,
-        });
-        console.log('Server response:', response.data);
-      }
+      // }
       
       if (!response.data.success) {
         throw new Error(response.data.message || 'Login failed');
@@ -52,7 +52,7 @@ const LoginForm = ({ onLogin, switchToRegister }) => {
       // Structure the data for the app to consume
       const loginData = {
         token: response.data.jwt_token || response.token,
-        role: userType,
+        role: "user",
         name: response.data.user?.name || response.data.client?.name || decoded.name,
         email: response.data.user?.email || response.data.client?.email || decoded.email,
         clientId: response.data.clientId || decoded.clientId,
@@ -83,7 +83,7 @@ const LoginForm = ({ onLogin, switchToRegister }) => {
       let endpoint = 'user/login';
       
 
-      const response = await axios.post(`${API_BASE_URL}/${endpoint}`, formData);
+      const response = await axios.post(`${API_BASE_URL}/clients/CLI746136Q0EY/mobile/${endpoint}`, formData);
       
       if (!response.data.success) {
         throw new Error(response.data.message || 'Login failed');

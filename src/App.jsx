@@ -17,6 +17,10 @@ import axios from 'axios'
 import { API_BASE_URL } from './config'
 import Admin from './Admin'
 import User from './User'
+import Mycart from './components/Mycart'
+import Checkout from './components/Checkout'
+import Payment from './components/Payment'
+import OrderSuccess from './components/OrderSuccess'
 
 function AppContent() {
   const [categories, setCategories] = useState([])
@@ -59,6 +63,11 @@ function AppContent() {
         <Route path="/category/:categoryName" element={<CategoryPage />} />
         <Route path="/all-products" element={<AllProductsPage />} />
         <Route path="/product/:productId" element={<ProductDetail />} />
+        <Route path="/cart" element={<Mycart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/order-success" element={<OrderSuccess/>} />
+
         <Route
           path="/category/:categoryName/subcategory/:subcategoryName/type/:typeName"
           element={<ProductList type="type" />}

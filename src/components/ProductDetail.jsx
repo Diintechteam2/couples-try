@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Heart, Star, ShoppingCart, ChevronLeft, ChevronRight, Truck, Shield, RotateCcw } from 'lucide-react'
 import axios from 'axios'
 import { API_BASE_URL } from '../config'
+import GoogleLoginModal from './GoogleLoginModal'
 
 export default function ProductDetail() {
   const { productId } = useParams()
@@ -14,6 +15,8 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [pendingCartItem, setPendingCartItem] = useState(null)
 
   useEffect(() => { 
     const fetchProduct = async () => {
@@ -50,22 +53,186 @@ export default function ProductDetail() {
     }
   }, [productId])
 
-  const handleAddToCart = () => {
-    if (!selectedSize && product?.sizes && product.sizes.length > 0) {
-      alert('Please select a size')
-      return
+  const handleBuyNow = () => {
+    navigate("/checkout", {
+      state: {
+        productData: {
+          ...product,
+          selectedSize: selectedSize,
+          quantity
+        }
+      }
+    });
+  };
+
+  const handleAddToCart = async () => {
+    console.log('=== handleAddToCart START ===');
+    console.log('Selected size:', selectedSize);
+    console.log('Quantity:', quantity);
+    console.log('Product:', product);
+    
+    if (!selectedSize) {
+      alert('Please select a size');
+      return;
     }
+
+    // Check if user is logged in
+    const token = localStorage.getItem('usertoken');
+    console.log('Token from localStorage:', token ? 'EXISTS' : 'NOT FOUND');
     
-    // Here you would typically add to cart logic
-    console.log('Adding to cart:', {
-      product: product._id,
-      size: selectedSize,
-      quantity: quantity
-    })
+    if (!token) {
+      console.log('No token found, showing login modal');
+      // Store the pending cart item and show login modal
+      setPendingCartItem({
+        dressId: product._id,
+        size: selectedSize,
+        quantity: quantity,
+        type: product.type
+      });
+      console.log('Pending cart item set:', {
+        dressId: product._id,
+        size: selectedSize,
+        quantity: quantity,
+        type: product.type
+      });
+      setShowLoginModal(true);
+      return;
+    }
+
+    console.log('Token found, proceeding with addToCartDirectly');
+    // User is logged in, proceed with adding to cart
+    await addToCartDirectly();
+  };
+
+  const addToCartDirectly = async () => {
+    console.log('=== addToCartDirectly START ===');
+    try {
+      const token = localStorage.getItem('usertoken');
+      console.log('Token for API call:', token);
+      
+      const payload = {
+        dressId: product._id,
+        size: selectedSize,
+        quantity: quantity
+      };
+      console.log('API Payload:', payload);
+      console.log('API URL:', `${API_BASE_URL}/clients/CLI746136Q0EY/user/cart/items`);
+      
+      const response = await axios.post(`${API_BASE_URL}/clients/CLI746136Q0EY/user/cart/items`, payload, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      console.log('API Response:', response);
+      console.log('Response data:', response.data);
+      
+      if (response.data.success) {
+        console.log('SUCCESS: Product added to cart');
+        alert('Product added to cart successfully!');
+      } else {
+        console.log('FAILED: API returned success: false');
+        alert('Failed to add product to cart');
+      }
+    } catch (error) {
+      console.log('=== ERROR IN addToCartDirectly ===');
+      console.error('Full error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response status:', error.response?.status);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error response headers:', error.response?.headers);
+      console.error('Request config:', error.config);
+      
+      if (error.response?.status === 401) {
+        console.log('401 Unauthorized - showing login modal');
+        alert('Please login to add items to cart');
+        setPendingCartItem({
+          dressId: product._id,
+          size: selectedSize,
+          quantity: quantity,
+          type: product.type
+        });
+        setShowLoginModal(true);
+      } else {
+        alert('Failed to add product to cart');
+      }
+    }
+  };
+
+// Replace your current handleLoginSuccess function (lines 116-141) with this:
+  const handleLoginSuccess = async (productInfo) => {
+    console.log('=== handleLoginSuccess START ===');
+    console.log('Product info received:', productInfo);
     
-    // For now, just show a success message
-    alert('Product added to cart successfully!')
-  }
+    // Now that user is logged in, add the pending item to cart
+    if (productInfo) {
+      try {
+        const token = localStorage.getItem('usertoken');
+        console.log('Token after login:', token);
+        console.log('Token type:', typeof token);
+        console.log('Token length:', token ? token.length : 'N/A');
+
+        if (!token) {
+          console.log('ERROR: No token found after login');
+          alert('Login token not found. Please try logging in again.');
+          return;
+        }
+
+        const payload = {
+          dressId: productInfo.dressId,
+          size: productInfo.size,
+          quantity: productInfo.quantity
+        };
+        
+        console.log('Cart API payload:', payload);
+        console.log('Cart API URL:', `${API_BASE_URL}/clients/CLI746136Q0EY/user/cart/items`);
+        console.log('Request headers:', {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        });
+
+        const response = await axios.post(`${API_BASE_URL}/clients/CLI746136Q0EY/user/cart/items`, payload, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log('Cart API response:', response);
+        console.log('Response status:', response.status);
+        console.log('Response data:', response.data);
+        
+        if (response.data.success) {
+          console.log('SUCCESS: Product added to cart after login');
+          alert('Product added to cart successfully!');
+          setPendingCartItem(null);
+        } else {
+          console.log('FAILED: Cart API returned success: false');
+          alert('Failed to add product to cart');
+        }
+      } catch (error) {
+        console.log('=== ERROR IN handleLoginSuccess ===');
+        console.error('Full error object:', error);
+        console.error('Error message:', error.message);
+        console.error('Error response status:', error.response?.status);
+        console.error('Error response data:', error.response?.data);
+        console.error('Error response headers:', error.response?.headers);
+        console.error('Request config:', error.config);
+        
+        if (error.response?.status === 401) {
+          alert('Authentication failed. Please try logging in again.');
+        } else if (error.response?.status === 400) {
+          alert('Invalid request: ' + (error.response.data.message || 'Bad request'));
+        } else if (error.response?.status === 500) {
+          alert('Server error. Please try again later.');
+        } else {
+          alert('Failed to add product to cart: ' + (error.message || 'Network error'));
+        }
+      }
+    } else {
+      console.log('ERROR: No product info received in handleLoginSuccess');
+    }
+  };
 
   const handleWishlist = () => {
     setIsWishlisted(!isWishlisted)
@@ -281,7 +448,8 @@ export default function ProductDetail() {
                 <ShoppingCart size={18} />
                 Add to Cart
               </button>
-              <button className="w-full lg:flex-1 border-2 border-pink-500 text-pink-500 py-3 rounded-lg font-semibold text-base hover:bg-pink-50 transition-colors">
+              <button className="w-full lg:flex-1 border-2 border-pink-500 text-pink-500 py-3 rounded-lg font-semibold text-base hover:bg-pink-50 transition-colors"
+              onClick={handleBuyNow}>
                 Buy Now
               </button>
             </div>
@@ -304,6 +472,17 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
+      {/* Google Login Modal */}
+      <GoogleLoginModal
+        isOpen={showLoginModal}
+        onClose={() => {
+          setShowLoginModal(false);
+          setPendingCartItem(null);
+        }}
+        onLoginSuccess={handleLoginSuccess}
+        productInfo={pendingCartItem}
+      />
     </div>
   )
 }

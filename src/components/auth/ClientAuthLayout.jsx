@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, Link, Navigate } from 'react-router-dom';
 import ClientLoginForm from './ClientLoginForm';
 import ClientRegisterForm from './ClientRegisterForm';
 
-const AdminAuthLayout = ({ onLogin }) => {
+const ClientAuthLayout = ({ onLogin }) => {
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ const AdminAuthLayout = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+      <div className="max-w-xl w-full bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-blue-800">Admin Portal</h1>
           <p className="text-gray-600 mt-2">Secured access for administrators</p>
@@ -37,7 +37,7 @@ const AdminAuthLayout = ({ onLogin }) => {
 
         <Routes>
           <Route path="/login" element={
-            <ClientLoginForm
+            <ClientLoginForm 
               onLogin={handleLoginSuccess} 
               switchToRegister={switchToRegister} 
             />
@@ -88,4 +88,4 @@ const AdminAuthLayout = ({ onLogin }) => {
   );
 };
 
-export default AdminAuthLayout; 
+export default ClientAuthLayout; 

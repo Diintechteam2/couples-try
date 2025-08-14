@@ -246,19 +246,19 @@ const RegisterForm = ({ onSuccess, switchToLogin }) => {
   );
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-8 bg-white rounded-xl shadow-2xl">
+    <div className="w-full max-w-7xl mx-auto p-8 bg-white rounded-xl shadow-md">
       <div className="text-center mb-10">
         <h2 className="text-4xl font-bold text-gray-800 mb-3">
           Create Your Account
         </h2>
         <p className="text-lg text-gray-600">
-          {userType === 'user' ? 'Join our community' : 'Register your business'}
+          Register your business
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* {userType === 'admin' && renderAdminFields()} */}
-        {userType === 'client' && renderClientFields()}
+        {renderClientFields()}
 
         {error && (
           <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">

@@ -26,8 +26,8 @@ const RegisterForm = ({ onSuccess, switchToLogin }) => {
 
     try {
       let endpoint = 'user/register';
-
-      const response = await axios.post(`${API_BASE_URL}/${endpoint}`, formData);
+      const clientId = 'CLI746136Q0EY';
+      const response = await axios.post(`${API_BASE_URL}/clients/${clientId}/mobile/${endpoint}`, formData);
       
       if (!response.data.success) {
         throw new Error(response.data.message || 'Registration failed');
@@ -87,31 +87,19 @@ const RegisterForm = ({ onSuccess, switchToLogin }) => {
           placeholder="Create a password"
         />
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-          <FaIdCard className="mr-2 text-gray-500" /> Client User ID
-        </label>
-        <input
-          type="text"
-          name="userId"
-          required
-          onChange={handleChange}
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-          placeholder="Enter the Client User ID provided by your business"
-        />
-      </div>
+      
     </div>
   );
 
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-8 bg-white rounded-xl shadow-2xl">
+    <div className="w-full max-w-7xl mx-auto p-8 bg-white rounded-xl shadow-md">
       <div className="text-center mb-10">
         <h2 className="text-4xl font-bold text-gray-800 mb-3">
           Create Your Account
         </h2>
         <p className="text-lg text-gray-600">
-          {userType === 'user' ? 'Join our community' : 'Register your business'}
+          Join our community
         </p>
       </div>
 

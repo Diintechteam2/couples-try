@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, Link, Navigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
-const AdminAuthLayout = ({ onLogin }) => {
+const AuthLayout = ({ onLogin }) => {
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ const AdminAuthLayout = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+      <div className="max-w-xl w-full bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-blue-800">User Portal</h1>
         </div>
@@ -56,7 +56,7 @@ const AdminAuthLayout = ({ onLogin }) => {
               <div className="mt-4">
                 <p className="text-gray-600">Need to create an account?</p>
                 <Link 
-                  to="/admin/register" 
+                  to="/auth/register" 
                   className="mt-2 inline-block text-blue-600 hover:underline"
                   onClick={switchToRegister}
                 >
@@ -67,7 +67,7 @@ const AdminAuthLayout = ({ onLogin }) => {
               <div className="mt-4">
                 <p className="text-gray-600">Already have an account?</p>
                 <Link 
-                  to="/admin/login" 
+                  to="/auth/login" 
                   className="mt-2 inline-block text-blue-600 hover:underline"
                   onClick={switchToLogin}
                 >
@@ -87,4 +87,4 @@ const AdminAuthLayout = ({ onLogin }) => {
   );
 };
 
-export default AdminAuthLayout; 
+export default AuthLayout; 
