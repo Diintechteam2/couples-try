@@ -54,7 +54,7 @@ export default function ProductDetail() {
   }, [productId])
 
   const handleBuyNow = () => {
-    navigate("/checkout", {
+    navigate("/auth/checkout", {
       state: {
         productData: {
           ...product,

@@ -3,24 +3,99 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, CreditCard, Truck, CheckCircle, Lock, Shield } from "lucide-react";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
+import OrderSuccess from "./OrderSuccess";
 
 export default function Payment() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [orderData, setOrderData] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("paytm");
+  const [paymentMethod, setPaymentMethod] = useState("online");
+  const [paymentStatus, setPaymentStatus] = useState("pending");
+  const [paymentDetails, setPaymentDetails] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [modalOrderData, setModalOrderData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   
   const token = localStorage.getItem("usertoken");
-  const orderId = location.state?.orderId;
+  const searchParams = new URLSearchParams(location.search);
+  const orderId = location.state?.orderId || searchParams.get('orderId');
 
   useEffect(() => {
     if (orderId) {
       fetchOrderDetails();
+      // Check if this is a return from Paytm payment
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentStatus = urlParams.get('status');
+      const returnedOrderId = urlParams.get('orderId');
+      const error = urlParams.get('error');
+      const message = urlParams.get('message');
+      
+      if (paymentStatus && returnedOrderId === orderId) {
+        if (paymentStatus === 'SUCCESS') {
+          setPaymentStatus('SUCCESS');
+          setError("");
+          setModalOrderData({
+            orderId: orderId,
+            totalAmount: orderData?.totalAmount || 0,
+            paymentMethod: 'online'
+          });
+          setShowSuccessModal(true);
+        } else if (paymentStatus === 'FAILED') {
+          setError(error || "Payment failed. Please try again.");
+          setPaymentStatus('FAILED');
+        } else if (paymentStatus === 'PENDING') {
+          setError(message || "Payment is still pending. Please wait or try again.");
+          setPaymentStatus('PENDING');
+        }
+        
+        // Auto-check payment status to get full details
+        setTimeout(() => {
+          checkPaymentStatus();
+        }, 1000);
+      }
+      
+      // Auto-check payment status when component loads
+      setTimeout(() => {
+        checkPaymentStatus();
+      }, 2000); // Check after 2 seconds
     } else {
-      navigate("/cart");
+      navigate("/auth/cart");
     }
-  }, [orderId]);
+  }, [orderId, navigate]);
+
+  // Auto-check payment status every 30 seconds for pending payments
+  // useEffect(() => {
+  //   if (!orderId || !orderData) return;
+    
+  //        const interval = setInterval(async () => {
+  //      try {
+  //        const response = await axios.get(`${API_BASE_URL}/payment/status/${orderId}`, {
+  //          headers: { Authorization: `Bearer ${token}` }
+  //        });
+         
+  //        if (response.data.success) {
+  //          const payment = response.data.payment;
+  //          setPaymentStatus(payment.status);
+  //          setPaymentDetails(payment);
+           
+  //          if (payment.status === "SUCCESS") {
+  //            clearInterval(interval);
+  //            setModalOrderData({
+  //              orderId: orderId,
+  //              totalAmount: orderData.totalAmount,
+  //              paymentMethod: 'online'
+  //            });
+  //            setShowSuccessModal(true);
+  //          }
+  //        }
+  //      } catch (error) {
+  //        console.error("Auto-check payment status error:", error);
+  //      }
+  //    }, 30000); // Check every 30 seconds
+    
+  //   return () => clearInterval(interval);
+  // }, [orderId, orderData, token, navigate]);
 
   const fetchOrderDetails = async () => {
     try {
@@ -77,6 +152,87 @@ export default function Payment() {
     }
   };
 
+  const checkPaymentStatus = async () => {
+    try {
+          const response = await axios.get(`${API_BASE_URL}/payment/status/${orderId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+      
+      // Save details for UI (includes customerEmail)
+      if (response.data && response.data.success && response.data.payment) {
+        setPaymentDetails(response.data.payment);
+      }
+
+      if (response.data.success && response.data.payment.status === "SUCCESS") {
+        setModalOrderData({
+          orderId: orderId,
+          totalAmount: orderData.totalAmount,
+          paymentMethod: 'online'
+        });
+        setShowSuccessModal(true);
+      } else if (response.data.success && response.data.payment.status === "FAILED") {
+        setError("Payment failed. Please try again.");
+        } else if (response.data.success && response.data.payment.status === "PENDING") {
+        setError("Payment is still pending. Please wait or try again.");
+      }
+    } 
+    catch (error) {
+      console.error("Error checking payment status:", error);
+      setError("Failed to check payment status");
+    }
+  }
+
+  // const verifyPayment = async () => {
+  //   try {
+  //     setLoading(true);
+  //     console.log("Verifying payment with:", {
+  //       paytmorderId: orderData?.paytmorderId || orderId,
+  //       orderId: orderId,
+  //       token: token ? "Present" : "Missing"
+  //     });
+      
+  //     const response = await axios.post(`${API_BASE_URL}/payment/verify`, {
+  //       paytmorderId: orderData?.paytmorderId || orderId
+  //     }, {
+  //       headers: { Authorization: `Bearer ${token}` }
+  //     });
+      
+  //     console.log("Verify payment response:", response.data);
+      
+  //     if (response.data.success) {
+  //       setError(""); // Clear any previous errors
+  //       setPaymentStatus("SUCCESS");
+  //       setPaymentDetails(response.data.payment || response.data);
+        
+  //       // Show success message for a few seconds before redirecting
+  //       // setTimeout(() => {
+  //       //   navigate('/auth/order-success', {
+  //       //     state: { 
+  //       //       orderData: {
+  //       //         orderId: orderId,
+  //       //         totalAmount: orderData.totalAmount,
+  //       //         paymentMethod: paymentMethod
+  //       //       }
+  //       //     } 
+  //       //   });
+  //       // }, 3000); // Wait 3 seconds to show success message
+  //     } else {
+  //       setError(response.data.message || "Payment verification failed");
+  //     }
+  //   } 
+  //   catch (error) {
+  //     console.error("Payment verification error:", error);
+  //     if (error.response) {
+  //       console.error("Error response:", error.response.data);
+  //       setError(`Verification failed: ${error.response.data.message || error.message}`);
+  //     } else {
+  //       setError("Failed to verify payment - Network error");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -94,7 +250,7 @@ export default function Payment() {
         <div className="text-center">
           <p className="text-gray-600">Order not found</p>
           <button 
-            onClick={() => navigate("/cart")}
+            onClick={() => navigate("/auth/cart")}
             className="mt-4 bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600"
           >
             Back to Cart
@@ -124,6 +280,123 @@ export default function Payment() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <p className="text-sm">{error}</p>
+            <button
+              onClick={() => setError("")}
+              className="text-red-500 hover:text-red-700 text-sm underline mt-1"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {/* Payment Status Display */}
+        {paymentDetails && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <CheckCircle size={20} />
+              Payment Status
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Status:</span>
+                  <span className={`font-semibold ${
+                    paymentStatus === "SUCCESS" ? "text-green-600" : 
+                    paymentStatus === "FAILED" ? "text-red-600" : 
+                    "text-orange-600"
+                  }`}>
+                    {paymentStatus === "SUCCESS" ? "✅ Payment Successful" :
+                     paymentStatus === "FAILED" ? "❌ Payment Failed" :
+                     "⏳ Payment Pending"}
+                  </span>
+                </div>
+                
+                {paymentDetails.transactionId && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Transaction ID:</span>
+                    <span className="font-mono text-sm">{paymentDetails.transactionId}</span>
+                  </div>
+                )}
+                
+                {paymentDetails.paytmorderId && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Paytm Order ID:</span>
+                    <span className="font-mono text-sm">{paymentDetails.paytmorderId}</span>
+                  </div>
+                )}
+                
+                {paymentDetails.paymentMode && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Payment Mode:</span>
+                    <span className="font-medium">{paymentDetails.paymentMode}</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="space-y-3">
+                {paymentDetails.bankName && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Bank:</span>
+                    <span className="font-medium">{paymentDetails.bankName}</span>
+                  </div>
+                )}
+                
+                {paymentDetails.responseCode && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Response Code:</span>
+                    <span className="font-mono text-sm">{paymentDetails.responseCode}</span>
+                  </div>
+                )}
+                
+                {paymentDetails.responseMsg && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Response Message:</span>
+                    <span className="font-medium">{paymentDetails.responseMsg}</span>
+                  </div>
+                )}
+                
+                {paymentDetails.amount && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Amount:</span>
+                    <span className="font-semibold text-green-600">₹{paymentDetails.amount}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {paymentStatus === "SUCCESS" && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center gap-2 text-green-700">
+                  <CheckCircle size={16} />
+                  <span className="font-medium">
+                    Payment completed successfully! {paymentDetails?.customerEmail ? `Order confirmation will be sent to your email (${paymentDetails.customerEmail}).` : 'Order confirmation will be sent to your email.'} Redirecting to order success page...
+                  </span>
+                </div>
+              </div>
+            )}
+            
+            {/* Refresh Status Button */}
+            <div className="mt-4 flex justify-between items-center">
+              <button
+                onClick={checkPaymentStatus}
+                disabled={loading}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors text-sm"
+              >
+                {loading ? "Refreshing..." : "🔄 Refresh Status"}
+              </button>
+              
+              <span className="text-xs text-gray-500">
+                Last updated: {new Date().toLocaleTimeString()}
+              </span>
+            </div>
+          </div>
+        )}
+        
         <div className="flex gap-6">
           {/* Left Section - Order Details & Payment Options */}
           <div className="flex-1 space-y-6">
@@ -192,8 +465,8 @@ export default function Payment() {
                   <input
                     type="radio"
                     name="payment"
-                    value="paytm"
-                    checked={paymentMethod === "paytm"}
+                    value="online"
+                    checked={paymentMethod === "online"}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="text-pink-500"
                   />
@@ -294,10 +567,31 @@ export default function Payment() {
                 ) : (
                   <>
                     <Lock size={20} />
-                    {paymentMethod === "paytm" ? "PAY WITH PAYTM" : "PLACE ORDER (COD)"}
+                    {paymentMethod === "online" ? "PAY WITH PAYTM" : "PLACE ORDER (COD)"}
                   </>
                 )}
               </button>
+              
+              {/* Check Payment Status Button */}
+              {paymentMethod === "online" && (
+                <button
+                  onClick={checkPaymentStatus}
+                  className="w-full mt-3 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm"
+                >
+                  Check Payment Status
+                </button>
+              )}
+              
+              {/* Verify Payment Button */}
+              {/* {paymentMethod === "paytm" && (
+                <button
+                  onClick={verifyPayment}
+                  disabled={loading}
+                  className="w-full mt-3 bg-blue-100 text-blue-700 py-3 rounded-lg font-medium hover:bg-blue-200 transition-colors text-sm disabled:opacity-50"
+                >
+                  Verify Payment & Complete Order
+                </button>
+              )} */}
               
               {/* Payment Security */}
               <div className="mt-4 p-3 bg-green-50 rounded-lg">
@@ -312,6 +606,12 @@ export default function Payment() {
           </div>
         </div>
       </div>
+      {showSuccessModal && (
+        <OrderSuccess
+          orderData={modalOrderData}
+          onClose={() => setShowSuccessModal(false)}
+        />
+      )}
     </div>
   );
 }

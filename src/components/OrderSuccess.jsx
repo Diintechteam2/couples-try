@@ -1,15 +1,76 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { CheckCircle, Package, Truck, Home, List } from "lucide-react";
+import { CheckCircle, Package, Truck, Home, List, X } from "lucide-react";
+import axios from "axios";
+import { API_BASE_URL } from "../config";
 
-export default function OrderSuccess() {
+export default function OrderSuccess(props) {
   const navigate = useNavigate();
   const location = useLocation();
-  const orderData = location.state?.orderData;
+  const providedOrderData = props?.orderData || location.state?.orderData || null;
+  const [fetchedOrderData, setFetchedOrderData] = useState(null);
+
+  const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const orderIdFromQuery = urlParams.get('orderId');
+  const amountFromQuery = urlParams.get('amount');
+  const statusFromQuery = urlParams.get('status');
+
+  useEffect(() => {
+    if (providedOrderData) return;
+    if (!orderIdFromQuery) return;
+
+    let isActive = true;
+    const token = localStorage.getItem("usertoken");
+
+    (async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/clients/CLI746136Q0EY/user/order/${orderIdFromQuery}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!isActive) return;
+        if (res.data?.success && res.data?.order) {
+          setFetchedOrderData({
+            orderId: orderIdFromQuery,
+            totalAmount: res.data.order.totalAmount ?? (amountFromQuery ? Number(amountFromQuery) : 0),
+            paymentMethod: 'online',
+          });
+        } else {
+          setFetchedOrderData({
+            orderId: orderIdFromQuery,
+            totalAmount: amountFromQuery ? Number(amountFromQuery) : 0,
+            paymentMethod: 'online',
+          });
+        }
+      } catch (err) {
+        setFetchedOrderData({
+          orderId: orderIdFromQuery,
+          totalAmount: amountFromQuery ? Number(amountFromQuery) : 0,
+          paymentMethod: 'online',
+        });
+      }
+    })();
+
+    return () => { isActive = false; };
+  }, [providedOrderData, orderIdFromQuery, amountFromQuery]);
+
+  const orderData = providedOrderData || fetchedOrderData;
+  console.log(orderData)
+  const handleClose = () => {
+    if (props?.onClose) return props.onClose();
+    // Fallback: go to home if we are on a dedicated route
+    navigate(-1);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full text-center">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+      <div className="relative bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full min-h-screen text-center">
+        <button
+          onClick={handleClose}
+          aria-label="Close"
+          className="absolute top-4 right-4 inline-flex items-center justify-center rounded-full w-9 h-9 bg-gray-100 text-gray-700 hover:bg-gray-200"
+        >
+          <X size={18} />
+        </button>
         {/* Success Icon */}
         <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={48} className="text-green-600" />
@@ -91,11 +152,11 @@ export default function OrderSuccess() {
         {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
-            onClick={() => navigate("/orders")}
+            onClick={() => navigate("/auth/cart")}
             className="bg-pink-500 text-white py-3 px-6 rounded-xl font-semibold hover:bg-pink-600 transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105"
           >
             <List size={18} />
-            View My Orders
+            Back to Cart
           </button>
           
           <button

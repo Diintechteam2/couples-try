@@ -1,69 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import AuthLayout from './components/auth/AuthLayout';
-import UserDashboard from './components/dashboards/UserDashboard';
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import AuthLayout from "./components/auth/AuthLayout";
+import UserDashboard from "./components/dashboards/UserDashboard";
+import Mycart from "./components/Mycart";
+import Checkout from "./components/Checkout";
+import Payment from "./components/Payment";
+import OrderSuccess from "./components/OrderSuccess";
+import Orders from "./components/Orders";
+import OrderDetails from "./components/OrderDetails";
 
 const User = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const usertoken = localStorage.getItem('usertoken');
-      const userData = localStorage.getItem('userData');
+      const usertoken = localStorage.getItem("usertoken");
+      const userData = localStorage.getItem("userData");
+
+      if (usertoken && userData) {
+        try {
+          const parseduserData = JSON.parse(userData);
+          if (parseduserData.role === "user") {
+            setIsAuthenticated(true);
+            // Update user data if needed
+            localStorage.setItem(
+              "userData",
+              JSON.stringify({
+                ...parseduserData,
+                name: parseduserData.name,
+              })
+            );
+          } else {
+            throw new Error("Invalid role");
+          }
+        } catch (error) {
+          console.error("Error validating user token:", error);
+          clearAuth();
+        }
+      } else {
+        // No token or user data, user is not authenticated
+        setIsAuthenticated(false);
+      }
       
-    //   if (usertoken && userData) {
-    //     try {
-    //       const parseduserData = JSON.parse(userData);
-    //       if (parseduserData.role === 'user') {
-    //         setIsAuthenticated(true);
-    //         // Update admin user data if needed
-    //         localStorage.setItem('userData', JSON.stringify({
-    //           ...parseduserData,
-    //           name: parseduserData.name
-    //         }));
-    //       } else {
-    //         throw new Error('Invalid role');
-    //       }
-    //     } catch (error) {
-    //       console.error('Error validating admin token:', error);
-    //       clearAuth();
-    //     }
-    //   }
-    console.log(usertoken);
-    console.log(userData)
-      
+      console.log(usertoken);
+      console.log(userData);
+
       setIsLoading(false);
-      setIsAuthenticated(false);
     };
-    
+
     initializeAuth();
   }, []);
 
   const clearAuth = () => {
-    localStorage.removeItem('usertoken');
-    localStorage.removeItem('userData');
+    localStorage.removeItem("usertoken");
+    localStorage.removeItem("userData");
     setIsAuthenticated(false);
     setIsLoading(false);
   };
 
   const handleAuthSuccess = (userData) => {
     // Store admin token and user data
-    localStorage.setItem('usertoken', userData.token);
-    localStorage.setItem('userData', JSON.stringify({
-      role: userData.role,
-      name: userData.name,
-      email: userData.email
-    }));
-    
+    localStorage.setItem("usertoken", userData.token);
+    localStorage.setItem(
+      "userData",
+      JSON.stringify({
+        role: userData.role,
+        name: userData.name,
+        email: userData.email,
+      })
+    );
+
     setIsAuthenticated(true);
     console.log("User authentication successful");
   };
 
   const handleLogout = () => {
     clearAuth();
-    navigate('/auth/login');
+    navigate("/auth/login");
   };
 
   if (isLoading) {
@@ -76,22 +91,25 @@ const User = () => {
 
   return (
     <div>
-        <Routes>
-        <Route path='/' element={<AuthLayout onLogin={handleAuthSuccess}/>}/>
-        {
-            isAuthenticated?
-            (
-                <>
-                <Route path='/dashboard' element={<UserDashboard onLogout={handleLogout}/>}/>
-                </>
-            )
-            :
-            (
-                <Route path='*' element={<AuthLayout onLogin={handleAuthSuccess}/>}/>
-
-            )
-        }
-        </Routes>
+      <Routes>
+        <Route path="/" element={<AuthLayout onLogin={handleAuthSuccess} />} />
+        {isAuthenticated ? (
+          <>
+            {/* <Route path='/dashboard' element={<UserDashboard onLogout={handleLogout}/>}/> */}
+            <Route path="/cart" element={<Mycart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:orderId" element={<OrderDetails />} />
+          </>
+        ) : (
+          <Route
+            path="*"
+            element={<AuthLayout onLogin={handleAuthSuccess} />}
+          />
+        )}
+      </Routes>
     </div>
   );
 };

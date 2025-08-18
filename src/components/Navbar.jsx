@@ -271,7 +271,9 @@ export default function Navbar({ categories = [] }) {
             {/* Heart icon: always */} 
             <span className="cursor-pointer"><Heart size={20} /></span>
             {/* Cart icon: only md+ */}
-            <NavLink to="/cart" className="cursor-pointer hidden md:inline-flex"><ShoppingBag size={20} /></NavLink>
+            <NavLink to="/auth/cart" className="cursor-pointer hidden md:inline-flex"><ShoppingBag size={20} /></NavLink>
+            <NavLink to="/auth/orders" className="cursor-pointer hidden md:inline-flex"><Package size={20} /></NavLink>
+
           </div>
         </div>
         {/* Menu - Below Logo, only on md+ */}
@@ -350,7 +352,7 @@ export default function Navbar({ categories = [] }) {
       />
 
       {/* Product Categories Section */}
-      {/* <div className="w-full bg-[#FFC1CC] px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-5 md:py-6 lg:py-8">
+      <div className="w-full bg-[#FFC1CC] px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-5 md:py-6 lg:py-8">
         <div className="flex justify-start xl:justify-center items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 overflow-x-auto scrollbar-hide pb-2 pl-2 sm:pl-4 md:pl-6 lg:pl-6 xl:pl-0">
           {categoryItems.map((category) => (
             <Link 
@@ -372,7 +374,7 @@ export default function Navbar({ categories = [] }) {
             </Link>
           ))}
         </div>
-      </div>  */}
+      </div> 
       <style>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

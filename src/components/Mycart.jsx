@@ -331,12 +331,10 @@ export default function Mycart() {
       console.log("Checkout readiness response:", response.data);
       if (response.data.success) {
         if (response.data.canCheckout) {
-          navigate("/checkout",{
-            state:{
-              productData:{
-                ...cart.items
-              }
-            }
+          navigate("/auth/checkout", {
+            state: {
+              cartItems: cart.items,
+            },
           });
         } else {
           setShowAddressForm(true);
@@ -681,7 +679,7 @@ export default function Mycart() {
                   
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Taxes</span>
-                    <span className="font-medium">₹{(totalAmount * 0.18).toFixed(2)}</span>
+                    <span className="font-medium">₹{(totalAmount * 1).toFixed(2)}</span>
                   </div>
                 </div>
                 

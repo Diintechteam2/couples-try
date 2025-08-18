@@ -24,7 +24,7 @@ const AuthLayout = ({ onLogin }) => {
 
   const handleLoginSuccess = (loginData) => {
     onLogin(loginData);
-    navigate('/auth/dashboard');
+    navigate('/');
   };
 
   return (
@@ -47,7 +47,7 @@ const AuthLayout = ({ onLogin }) => {
               switchToLogin={switchToLogin} 
             />
           } />
-          <Route path="/" element={<Navigate to="/auth/login" replace />} />
+          <Route path="*" element={<Navigate to="/auth/login" replace />} />
         </Routes>
 
         <div className="mt-6 border-t border-gray-200 pt-4">
@@ -55,6 +55,7 @@ const AuthLayout = ({ onLogin }) => {
             {authMode === 'login' ? (
               <div className="mt-4">
                 <p className="text-gray-600">Need to create an account?</p>
+                
                 <Link 
                   to="/auth/register" 
                   className="mt-2 inline-block text-blue-600 hover:underline"
@@ -77,7 +78,7 @@ const AuthLayout = ({ onLogin }) => {
             )}
           </div>
           <div className="mt-6 text-center">
-            <Link to="/auth" className="text-gray-500 hover:text-gray-700">
+            <Link to="/auth/login" className="text-gray-500 hover:text-gray-700">
               Return to main login
             </Link>
           </div>

@@ -15,19 +15,23 @@ export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Get product data from navigation state or URL params
+  // Get data from navigation state
+  const cartItems = location.state?.cartItems;
   const productData = location.state?.productData;
   const token = localStorage.getItem("usertoken");
   console.log(productData)
   useEffect(() => {
     if (productData) {
-      // Generate order summary for single product
+      // Single product checkout
       generateOrderSummary();
+    } else if (Array.isArray(cartItems) && cartItems.length > 0) {
+      // Build order summary from passed cart items
+      generateSummaryFromCart(cartItems);
     } else {
-      // Get order summary from cart
+      // Fallback: fetch summary from backend
       fetchOrderSummary();
     }
-  }, [productData]);
+  }, [productData, cartItems]);
 
   const generateOrderSummary = () => {
     if (!productData) return;
@@ -40,11 +44,26 @@ export default function Checkout() {
         price: productData.price
       }],
       subtotal: (productData.price)*(productData.quantity),
-      delivery: 0, // Free delivery
-      taxes: (productData.price)*(productData.quantity)* 0.18,
-      total: (productData.price)*(productData.quantity)* 1.18
+      delivery: 0,
+      taxes: (productData.price)*(productData.quantity) * 1,
+      total: (productData.price)*(productData.quantity) * 1
     };
     setOrderSummary(summary);
+  };
+
+  const generateSummaryFromCart = (items) => {
+    if (!Array.isArray(items) || items.length === 0) return;
+    const normalized = items.map(ci => ({
+      product: ci.product,
+      quantity: ci.quantity,
+      size: ci.size,
+      price: ci.priceAtAdd ?? ci.price,
+    }));
+    const subtotal = normalized.reduce((sum, it) => sum + (it.price * it.quantity), 0);
+    const delivery = 0;
+    const taxes = subtotal * 0.18;
+    const total = subtotal + taxes + delivery;
+    setOrderSummary({ items: normalized, subtotal, delivery, taxes, total });
   };
 
   const fetchOrderSummary = async () => {
@@ -83,12 +102,12 @@ export default function Checkout() {
         console.log(response.data)
         if(paymentMethod === "online")
         {
-          navigate("/payment", { 
+          navigate("/auth/payment", { 
             state: { orderId: response.data.orderId } 
           });
         }
         else {
-          navigate("/order-success", { 
+          navigate("/auth/order-success", { 
             state: { 
               orderData: {
                 orderId: response.data.orderId,
