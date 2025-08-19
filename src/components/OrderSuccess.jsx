@@ -63,7 +63,7 @@ export default function OrderSuccess(props) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="relative bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full min-h-screen text-center">
+      <div className="relative bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full max-h-[100vh] overflow-y-auto text-center my-auto">
         <button
           onClick={handleClose}
           aria-label="Close"
